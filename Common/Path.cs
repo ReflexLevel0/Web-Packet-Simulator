@@ -20,7 +20,7 @@ namespace Common
         /// <returns></returns>
         public static Path GetPath(List<Path> paths, Router sourceRouter, Router destinationRouter) =>
             (from path in paths
-             where path.SourceRouter == sourceRouter
+             where path.SourceRouter == sourceRouter && path.DestinationRouter == destinationRouter
              select path).FirstOrDefault();
     }
 }
