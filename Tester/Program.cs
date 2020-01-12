@@ -1,7 +1,7 @@
 ﻿using System;
-using Common;
+using WebPacketSimulator.Common;
 
-namespace Tester
+namespace WebPacketSimulator.Tester
 {
     class Program
     {

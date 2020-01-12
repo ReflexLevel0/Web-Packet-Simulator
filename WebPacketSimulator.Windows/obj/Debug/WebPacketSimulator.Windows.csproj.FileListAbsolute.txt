@@ -1,0 +1,17 @@
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\WebPacketSimulator.Windows.exe.config
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\WebPacketSimulator.Windows.exe
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\WebPacketSimulator.Windows.pdb
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.csprojAssemblyReference.cache
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\MainWindow.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\App.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows_MarkupCompile.cache
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows_MarkupCompile.lref
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\MainWindow.baml
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.g.resources
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.Properties.Resources.resources
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.csproj.GenerateResource.cache
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.exe
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.pdb
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\Common.dll
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\Common.pdb
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.csproj.CopyComplete

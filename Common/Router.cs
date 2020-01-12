@@ -5,12 +5,10 @@ using System.Net;
 using System.Text;
 using System.Linq;
 
-namespace Common
+namespace WebPacketSimulator.Common
 {
     public class Router
     {
-        public static List<Router> Routers = new List<Router>();
-        public Point Location;
         public List<Router> LinkedRouters = new List<Router>();
         public string Name { get; set; }
         public string Address { get; set; }
