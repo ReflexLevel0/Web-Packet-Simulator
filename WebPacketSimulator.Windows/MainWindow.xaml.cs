@@ -27,10 +27,11 @@ namespace WebPacketSimulator.Wpf
         {
             public Point Location;
             public Router Router;
-            public Image RouterImage;
+            public Canvas RouterImage;
         }
 
-        Size routerImageSize = new Size(50, 50);
+        static Size routerImageSize = new Size(50, 50);
+        static Size circleImageSize = new Size(10, 10);
         Point previousMousePosition = new Point();
         List<_Router> highlightedRouters
             = new List<_Router>();
@@ -65,7 +66,7 @@ namespace WebPacketSimulator.Wpf
                 bool isCtrlClicked =
                     Keyboard.IsKeyDown(Key.LeftCtrl) == true ||
                     Keyboard.IsKeyDown(Key.RightCtrl) == true;
-                
+
                 //Highlighting/unhighlighting the clicked router if ctrl is pressed
                 if (isCtrlClicked == true)
                 {
@@ -93,25 +94,64 @@ namespace WebPacketSimulator.Wpf
                 }
             }
 
-            //If no router is where mouse has been clicked
+            //Creating a router if there is no router on location where mouse was clicked
             else
             {
-                var routerImage = new Image()
-                {
-                    Source = new BitmapImage(new Uri("Router.png", UriKind.Relative)),
-                    MaxHeight = routerImageSize.Height,
-                    MaxWidth = routerImageSize.Width
-                };
-                Point routerLocation = new Point((int)(position.X - routerImageSize.Width / 2),
+                //Creating router image and setting margins
+                Point imageMargin = new Point((int)(position.X - routerImageSize.Width / 2),
                                                    (int)(position.Y - routerImageSize.Height / 2));
-                routerImage.Margin = new Thickness(routerLocation.X, routerLocation.Y, 0, 0);
-                MainCanvas.Children.Add(routerImage);
-                routers.Add(new _Router()
+                var newRouter = new _Router()
                 {
-                    Location = routerLocation,
+                    Location = imageMargin,
                     Router = new Router(),
-                    RouterImage = routerImage
-                });
+                    RouterImage = new Canvas()
+                };
+                newRouter.RouterImage.Background = new ImageBrush(new BitmapImage(new Uri("Router.png", UriKind.Relative)));
+                newRouter.RouterImage.Width = routerImageSize.Width;
+                newRouter.RouterImage.Height = routerImageSize.Height;
+                newRouter.RouterImage.Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0);
+
+                //Adding circles to router image (so other routers can be connected to it)
+                for (int i = 0; i < 4; i++)
+                {
+                    double left = 0;
+                    double top = 0;
+                    switch (i)
+                    {
+                        case 0:
+                            left = newRouter.RouterImage.Width / 2 - circleImageSize.Width / 2;
+                            break;
+                        case 1:
+                            left = newRouter.RouterImage.Width - circleImageSize.Width;
+                            top = newRouter.RouterImage.Height / 2 - circleImageSize.Height / 2;
+                            break;
+                        case 2:
+                            left = newRouter.RouterImage.Width / 2 - circleImageSize.Width / 2;
+                            top = newRouter.RouterImage.Height - circleImageSize.Height;
+                            break;
+                        case 3:
+                            top = newRouter.RouterImage.Height / 2 - circleImageSize.Height / 2;
+                            break;
+                    }
+                    var circle = GetDefaultCircleImage();
+                    circle.Margin = new Thickness(left, top, 0, 0);
+                    newRouter.RouterImage.Children.Add(circle);
+                }
+
+                //Unhighlighting other routers
+                foreach (var router in highlightedRouters)
+                {
+                    router.RouterImage.Opacity = 1;
+                }
+                highlightedRouters.Clear();
+
+                //Higlighting the new router
+                newRouter.RouterImage.Opacity = 0.5f;
+                highlightedRouters.Add(newRouter);
+
+                //Cleanup
+                routers.Add(newRouter);
+                MainCanvas.Children.Add(newRouter.RouterImage);
             }
         }
 
@@ -157,10 +197,30 @@ namespace WebPacketSimulator.Wpf
         }
         #endregion
 
-        static bool IsPointOnImage(System.Windows.Point clickLocation, Image image) =>
+        /// <summary>
+        /// This function checks if a router image has been clicked
+        /// </summary>
+        /// <param name="clickLocation"> Click location (relative to image's parent (canvas)) </param>
+        /// <param name="image"> Image which is being tested </param>
+        /// <returns></returns>
+        static bool IsPointOnImage(System.Windows.Point clickLocation, Canvas image) =>
             image.Margin.Left <= clickLocation.X &&
             image.Margin.Left + image.ActualWidth >= clickLocation.X &&
             image.Margin.Top <= clickLocation.Y &&
             image.Margin.Top + image.ActualHeight >= clickLocation.Y;
+
+        /// <summary>
+        /// This function returns the default circle which is used for connecting routers
+        /// </summary>
+        /// <returns></returns>
+        static Ellipse GetDefaultCircleImage()
+        {
+            var circle = new Ellipse();
+            circle.Stroke = Brushes.Black;
+            circle.StrokeThickness = 1;
+            circle.Height = circleImageSize.Height;
+            circle.Width = circleImageSize.Width;
+            return circle;
+        }
     }
 }

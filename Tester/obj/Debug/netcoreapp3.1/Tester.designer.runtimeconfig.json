@@ -1,0 +1,18 @@
+{
+  "runtimeOptions": {
+    "tfm": "netcoreapp3.1",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "3.1.0"
+    },
+    "additionalProbingPaths": [
+      "C:\\Users\\Korisnik\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Korisnik\\.nuget\\packages",
+      "C:\\Microsoft\\Xamarin\\NuGet",
+      "C:\\PROGRAM FILES\\DOTNET\\sdk\\NuGetFallbackFolder"
+    ],
+    "configProperties": {
+      "Microsoft.NETCore.DotNetHostPolicy.SetAppPaths": true
+    }
+  }
+}
