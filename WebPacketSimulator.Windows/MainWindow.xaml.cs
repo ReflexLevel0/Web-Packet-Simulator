@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WebPacketSimulator.Common;
+using static WebPacketSimulator.Wpf.Connection;
 using Point = System.Drawing.Point;
 
 namespace WebPacketSimulator.Wpf
@@ -23,24 +24,23 @@ namespace WebPacketSimulator.Wpf
     public partial class MainWindow : Window
     {
         #region Variables
-        struct _Router
-        {
-            public Point Location;
-            public Router Router;
-            public Canvas RouterImage;
-        }
-
-        static Size routerImageSize = new Size(50, 50);
-        static Size circleImageSize = new Size(10, 10);
+        public static Size RouterImageSize = new Size(50, 50);
+        public static Size CircleImageSize = new Size(7.5f, 7.5f);
         Point previousMousePosition = new Point();
-        List<_Router> highlightedRouters
-            = new List<_Router>();
-        List<_Router> routers
-            = new List<_Router>();
+        List<WpfRouter> highlightedRouters
+            = new List<WpfRouter>();
+        List<WpfRouter> routers
+            = new List<WpfRouter>();
         #endregion
 
         public MainWindow()
         {
+            Binding binding = new Binding("TopConnectionLocation.Y");
+            binding.Source = new WpfRouter() { TopConnectionLocation = new System.Windows.Point(100,200) };
+            binding.Mode = BindingMode.TwoWay;
+            Connection connection = new Connection();
+            connection.ConnectionLine.SetBinding(Line.X1Property, binding);
+            MessageBox.Show(connection.ConnectionLine.X1.ToString());
             InitializeComponent();
         }
 
@@ -50,7 +50,7 @@ namespace WebPacketSimulator.Wpf
             var position = e.GetPosition(MainCanvas);
 
             //Highlighting the router on the click position
-            _Router highlightedRouter = new _Router();
+            WpfRouter highlightedRouter = null;
             bool clickedOnRouter = false;
             foreach (var router in routers)
             {
@@ -98,17 +98,26 @@ namespace WebPacketSimulator.Wpf
             else
             {
                 //Creating router image and setting margins
-                Point imageMargin = new Point((int)(position.X - routerImageSize.Width / 2),
-                                                   (int)(position.Y - routerImageSize.Height / 2));
-                var newRouter = new _Router()
+                Point imageMargin = new Point((int)(position.X - RouterImageSize.Width / 2),
+                                                   (int)(position.Y - RouterImageSize.Height / 2));
+                var newRouter = new WpfRouter()
                 {
                     Location = imageMargin,
-                    Router = new Router(),
                     RouterImage = new Canvas()
                 };
-                newRouter.RouterImage.Background = new ImageBrush(new BitmapImage(new Uri("Router.png", UriKind.Relative)));
-                newRouter.RouterImage.Width = routerImageSize.Width;
-                newRouter.RouterImage.Height = routerImageSize.Height;
+                var image = new Image() { 
+                    Source = new BitmapImage(new Uri("Router.png", UriKind.Relative)),
+                    Width = RouterImageSize.Width,
+                    Height = RouterImageSize.Height
+                };
+                image.Margin = new Thickness(
+                        CircleImageSize.Width / 2, 
+                        CircleImageSize.Height / 2, 
+                        CircleImageSize.Width / 2, 
+                        CircleImageSize.Height / 2);
+                newRouter.RouterImage.Children.Add(image);
+                newRouter.RouterImage.Width = RouterImageSize.Width + CircleImageSize.Width;
+                newRouter.RouterImage.Height = RouterImageSize.Height + CircleImageSize.Height;
                 newRouter.RouterImage.Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0);
 
                 //Adding circles to router image (so other routers can be connected to it)
@@ -119,18 +128,18 @@ namespace WebPacketSimulator.Wpf
                     switch (i)
                     {
                         case 0:
-                            left = newRouter.RouterImage.Width / 2 - circleImageSize.Width / 2;
+                            left = newRouter.RouterImage.Width / 2 - CircleImageSize.Width / 2;
                             break;
                         case 1:
-                            left = newRouter.RouterImage.Width - circleImageSize.Width;
-                            top = newRouter.RouterImage.Height / 2 - circleImageSize.Height / 2;
+                            left = newRouter.RouterImage.Width - CircleImageSize.Width;
+                            top = newRouter.RouterImage.Height / 2 - CircleImageSize.Height / 2;
                             break;
                         case 2:
-                            left = newRouter.RouterImage.Width / 2 - circleImageSize.Width / 2;
-                            top = newRouter.RouterImage.Height - circleImageSize.Height;
+                            left = newRouter.RouterImage.Width / 2 - CircleImageSize.Width / 2;
+                            top = newRouter.RouterImage.Height - CircleImageSize.Height;
                             break;
                         case 3:
-                            top = newRouter.RouterImage.Height / 2 - circleImageSize.Height / 2;
+                            top = newRouter.RouterImage.Height / 2 - CircleImageSize.Height / 2;
                             break;
                     }
                     var circle = GetDefaultCircleImage();
@@ -150,6 +159,7 @@ namespace WebPacketSimulator.Wpf
                 highlightedRouters.Add(newRouter);
 
                 //Cleanup
+                newRouter.RouterImage.MouseLeftButtonUp += RouterImage_MouseLeftButtonUp;
                 routers.Add(newRouter);
                 MainCanvas.Children.Add(newRouter.RouterImage);
             }
@@ -188,15 +198,38 @@ namespace WebPacketSimulator.Wpf
                         int topMargin = (int)router.RouterImage.Margin.Top +
                                         (int)newMousePosition.Y - previousMousePosition.Y;
                         router.RouterImage.Margin = new Thickness(leftMargin, topMargin, 0, 0);
+                        router.UpdateConnectionLocations();
                     }
-                    //TextBlock.Text = string.Format("{0};{1}", newMousePosition.X - previousMousePosition.X, newMousePosition.Y - previousMousePosition.Y);
                 }
             }
 
             previousMousePosition = new Point((int)newMousePosition.X, (int)newMousePosition.Y);
         }
+
+        /// <summary>
+        /// This event gets fired once router gets clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RouterImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Canvas canvas = sender as Canvas;
+            var point = e.GetPosition(canvas);
+            PointLocations? pointLocation = GetClickedPointIndex(
+                canvas, 
+                new Point((int)point.X, (int)point.Y));
+            if(pointLocation == null)
+            {
+                return;
+            }
+            else
+            {
+                
+            }
+        }
         #endregion
 
+        #region Other functions
         /// <summary>
         /// This function checks if a router image has been clicked
         /// </summary>
@@ -218,9 +251,48 @@ namespace WebPacketSimulator.Wpf
             var circle = new Ellipse();
             circle.Stroke = Brushes.Black;
             circle.StrokeThickness = 1;
-            circle.Height = circleImageSize.Height;
-            circle.Width = circleImageSize.Width;
+            circle.Height = CircleImageSize.Height;
+            circle.Width = CircleImageSize.Width;
             return circle;
         }
+
+        /// <summary>
+        /// This function checks if the click location is on one of router's points or not
+        /// </summary>
+        /// <param name="routerCanvas"> Canvas which contains router image  </param>
+        /// <param name="clickLocation"> Location on the click (relative to the canvas which was clicked) </param>
+        /// <returns></returns>
+        static PointLocations? GetClickedPointIndex(Canvas routerCanvas, Point clickLocation)
+        {
+            int i = 0;
+            foreach(var child in routerCanvas.Children)
+            {
+                Ellipse point = child as Ellipse;
+                if(point == null)
+                {
+                    continue;
+                }
+                if (point.Margin.Left >= clickLocation.X &&
+                    point.Margin.Left + point.Width <= clickLocation.X &&
+                    point.Margin.Top >= clickLocation.Y &&
+                    point.Margin.Top + point.Height <= clickLocation.Y)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            return PointLocations.Top;
+                        case 1:
+                            return PointLocations.Right;
+                        case 2:
+                            return PointLocations.Bottom;
+                        case 3:
+                            return PointLocations.Left;
+                    }
+                }
+                i++;
+            }
+            return null;
+        }
+        #endregion
     }
 }

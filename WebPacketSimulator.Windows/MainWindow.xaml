@@ -18,6 +18,7 @@
                 MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
                 MouseMove="MainCanvas_MouseMove"
                 Background="White">
+            <!--<Line X1="100" Y1="100" X2="200" Y2="200" Stroke="Blue" StrokeThickness="10"/>-->
         </Canvas>
         <!--<TextBlock Grid.Row="1" x:Name="TextBlock"/>-->
     </Grid>

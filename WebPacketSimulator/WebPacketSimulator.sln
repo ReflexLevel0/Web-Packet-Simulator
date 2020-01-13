@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "..\Common\Common.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "..\Tester\Tester.csproj", "{3F6E5CF7-4C14-48E3-B652-A9C04503F84A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPacketSimulator.Windows", "..\WebPacketSimulator.Windows\WebPacketSimulator.Windows.csproj", "{B3CDA92C-99BA-404F-82B4-3D1D25A21E08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPacketSimulator.Wpf", "..\WebPacketSimulator.Windows\WebPacketSimulator.Wpf.csproj", "{B3CDA92C-99BA-404F-82B4-3D1D25A21E08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
