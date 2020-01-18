@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -21,10 +22,10 @@ namespace WebPacketSimulator.Wpf
     {
         public System.Drawing.Point Location;
         public Canvas RouterImage;
-        public Router Router;
+        public Router Router { get; set; }
         public static Size RouterImageSize = new Size(50, 50);
         public static List<WpfRouter> HighlightedRouters = new List<WpfRouter>();
-        public static List<WpfRouter> Routers = new List<WpfRouter>();
+        public static ObservableCollection<WpfRouter> Routers = new ObservableCollection<WpfRouter>();
         public static WpfRouter LastClickedRouter = null;
         public static double HighlightedImageOpacity = 0.5;
 
@@ -128,6 +129,11 @@ namespace WebPacketSimulator.Wpf
         /// <returns></returns>
         public static Connection ConnectRouters(WpfRouter routerA, WpfRouter routerB, ConnectionLocations routerAConnectionLocation, ConnectionLocations routerBConnectionLocation)
         {
+            if(routerA == routerB)
+            {
+                throw new Exception("Can't connect the router to itself!");
+            }
+
             var connection = new Connection()
             {
                 SourceRouter = routerA,
@@ -162,6 +168,8 @@ namespace WebPacketSimulator.Wpf
             }
             connection.ConnectionLine.Stroke = System.Windows.Media.Brushes.Black;
             connection.ConnectionLine.StrokeThickness = 2;
+            routerA.Router.LinkedRouters.Add(routerB.Router);
+            routerB.Router.LinkedRouters.Add(routerA.Router);
             return connection;
         }
 
@@ -186,7 +194,7 @@ namespace WebPacketSimulator.Wpf
         /// This function creates a router control for this router
         /// </summary>
         /// <returns></returns>
-        public static WpfRouter CreateRouterControl(Point location)
+        public static WpfRouter CreateRouter(Point location)
         {
             //Creating router image and setting margins
             Point imageMargin = new Point((int)(location.X - RouterImageSize.Width / 2),
@@ -194,7 +202,8 @@ namespace WebPacketSimulator.Wpf
             var newRouter = new WpfRouter()
             {
                 Location = new System.Drawing.Point((int)imageMargin.X, (int)imageMargin.Y),
-                RouterImage = new Canvas()
+                RouterImage = new Canvas(),
+                Router = new Router()
             };
             var image = new System.Windows.Controls.Image()
             {
@@ -246,11 +255,18 @@ namespace WebPacketSimulator.Wpf
                 circle.MouseLeftButtonUp += Connection_MouseLeftButtonUp;
                 newRouter.RouterImage.Children.Add(circle);
             }
+            newRouter.Router.Name = "Test" + new Random().Next().ToString();
             return newRouter;
         }
 
         private static void Connection_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            //If canvas hasn't been initialized
+            if(MainWindow.Canvas == null)
+            {
+                return;
+            }
+
             WpfRouter clickedRouter = (from router in Routers
                                        let canvas = (sender as Ellipse).Parent as Canvas
                                        where router.RouterImage == canvas
@@ -267,9 +283,52 @@ namespace WebPacketSimulator.Wpf
             else
             {
                 var connection = ConnectRouters(LastClickedRouter, clickedRouter, LastClickedConnectionLocation, connectionLocation);
-                MainCanvas.Children.Add(connection.ConnectionLine);
+                MainWindow.Canvas.Children.Add(connection.ConnectionLine);
                 LastClickedRouter = null;
             }
         }
+
+        /// <summary>
+        /// This function returns the router with the specified name
+        /// </summary>
+        /// <param name="routerName"> Name of the reouter which will be returned </param>
+        /// <param name="useForce"> Is this parameter is null, exception will be thrown if router with specified name wasn't found </param>
+        /// <returns></returns>
+        public static WpfRouter GetRouter(string routerName, bool useForce) {
+            WpfRouter result = (from router in Routers
+                                where router.Router.Name.CompareTo(routerName) == 0
+                                select router).FirstOrDefault();
+            if(useForce == true && result == null)
+            {
+                throw new Exception("Router with name \"" + routerName + "\" wasn't found!");
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// This function gets a WpfRouter which represents a router
+        /// </summary>
+        /// <param name="router"> Router that is being searched for </param>
+        /// <param name="useForce"> If true, exception will be thrown if router wasn't found </param>
+        /// <returns></returns>
+        public static WpfRouter GetRouter(Router router, bool useForce)
+        {
+            var result = (from _router in Routers
+                          where _router.Router == router
+                          select _router).FirstOrDefault();
+            if(result == null && useForce == true)
+            {
+                throw new Exception();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// This function returns all routers (not WpfRouters, but ordinary Routers)
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<Router> GetRouters() => 
+            from router in Routers
+            select router.Router;
     }
 }

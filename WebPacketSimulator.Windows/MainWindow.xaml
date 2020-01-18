@@ -9,17 +9,23 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <!--<RowDefinition Height="auto"/>-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Canvas x:Name="MainCanvas" 
                 MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
                 MouseMove="MainCanvas_MouseMove"
-                Background="White">
-            <!--<Line X1="100" Y1="100" X2="200" Y2="200" Stroke="Blue" StrokeThickness="10"/>-->
+                Background="White" 
+                Grid.RowSpan="3">
         </Canvas>
-        <!--<TextBlock Grid.Row="1" x:Name="TextBlock"/>-->
+        <StackPanel Grid.Column="1" Orientation="Vertical">
+            <TextBlock Text="Source router:"/>
+            <ComboBox x:Name="SourceRouterListView" SelectionChanged="Source_Destination_SelectionChanged"/>
+            <TextBlock Text="Destination router:"/>
+            <ComboBox x:Name="DestinationRouterListView" SelectionChanged="Source_Destination_SelectionChanged"/>
+            <Button Content="Send message" Click="SendMessageButton_Click" IsEnabled="{Binding CanSendMessage}"/>
+        </StackPanel>
     </Grid>
 </Window>

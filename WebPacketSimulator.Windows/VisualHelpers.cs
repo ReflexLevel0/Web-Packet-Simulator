@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace WebPacketSimulator.Wpf
@@ -32,7 +34,7 @@ namespace WebPacketSimulator.Wpf
         /// <returns></returns>
         public static bool IsOnAnyImage(this Point clickLocation, List<WpfRouter> routers)
         {
-            foreach(var image in routers.Select(router => router.RouterImage))
+            foreach (var image in routers.Select(router => router.RouterImage))
             {
                 if (clickLocation.IsOnImage(image))
                 {
@@ -70,8 +72,13 @@ namespace WebPacketSimulator.Wpf
         /// This function highlights all routers from a list of routers
         /// </summary>
         /// <param name="routers"> Routers to be highlighted </param>
-        public static void HighlightAllRouters(this List<WpfRouter> routers) =>
-            routers.ForEach(new Action<WpfRouter>(router => HighlightRouter(router)));
+        public static void HighlightAllRouters(this List<WpfRouter> routers)
+        {
+            while (routers.Count != 0)
+            {
+                routers[0].HighlightRouter();
+            }
+        }
 
         /// <summary>
         /// This function unhighlights the selected router
@@ -87,7 +94,63 @@ namespace WebPacketSimulator.Wpf
         /// This function unhighlights all routers from a list of routers
         /// </summary>
         /// <param name="routers"> Routers to be unhighlighted </param>
-        public static void UnhighlightAllRouters(this List<WpfRouter> routers) =>
-            routers.ForEach(new Action<WpfRouter>(router => UnhighlightRouter(router)));
+        public static void UnhighlightAllRouters(this List<WpfRouter> routers)
+        {
+            while (routers.Count != 0)
+            {
+                routers[0].UnhighlightRouter();
+            }
+        }
+
+        /// <summary>
+        /// This function returns router on the chosen location (or null if there are no routers on the chosen location)
+        /// </summary>
+        /// <param name="location"> Location from which a router will be recieved </param>
+        /// <returns></returns>
+        public static WpfRouter GetRouterOnLocation(this Point location)
+        {
+            foreach (var router in WpfRouter.Routers)
+            {
+                if (location.IsOnImage(router.RouterImage))
+                {
+                    return router;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// This function is used for simulating message sending from one router to another
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="canvas"> Canvas with all controls </param>
+        public async static Task SendPacket(WpfRouter source, WpfRouter destination, Canvas canvas, MainWindow mainWindow)
+        {
+            //Getting path to destination and setting up message image
+            var path = source.Router.GetPathToRouter(WpfRouter.GetRouters().ToList(),
+                                                     destination.Router);
+            path.RemoveAt(0);
+            var messageImage = MainWindow.MessageImage;
+            messageImage.Margin = source.RouterImage.Margin;
+            canvas.Children.Add(messageImage);
+            Canvas.SetZIndex(messageImage, 1);
+
+            //Animating the message
+            foreach (var router in path)
+            {
+                var wpfRouter = WpfRouter.GetRouter(router, true);
+                var currentMargin = wpfRouter.RouterImage.Margin;
+                var animation = new ThicknessAnimation(){
+                    From = messageImage.Margin,
+                    To = currentMargin,
+                    Duration = new Duration(TimeSpan.FromSeconds(1)),
+                    FillBehavior = FillBehavior.Stop 
+                };
+                await mainWindow.Animate(animation);
+                messageImage.Margin = wpfRouter.RouterImage.Margin;
+            }
+            canvas.Children.Remove(messageImage);
+        }
     }
 }
