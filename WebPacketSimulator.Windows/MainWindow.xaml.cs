@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,86 +26,28 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        #region Local variables
         Point previousMousePosition = new Point();
-        public static Canvas Canvas;
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        enum Components { Select, Router, Line, Packet }
+        Components SelectedComponent = Components.Select;
+        #endregion
 
-        bool canSendMessage;
-        /// <summary>
-        /// Specifies if the user can send the message at this moment
-        /// </summary>
-        public bool CanSendMessage
-        {
-            get => canSendMessage;
-            set
-            {
-                if (canSendMessage != value)
-                {
-                    canSendMessage = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(canSendMessage)));
-                }
-            }
-        }
-
-        public static Image MessageImage = new Image()
+        #region Static variables
+        public static Canvas Canvas;
+        public static Image PacketImage = new Image()
         {
             Source = new BitmapImage(new Uri("Packet.png", UriKind.Relative)),
             Width = 24,
             Height = 24
         };
-
-        enum Components { Select, Router, Line }
-        Components SelectedComponent = Components.Select;
+        #endregion
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             Canvas = MainCanvas;
-            SourceRouterListView.ItemsSource = WpfRouter.Routers;
-            SourceRouterListView.DisplayMemberPath = "Router.Name";
-            DestinationRouterListView.ItemsSource = WpfRouter.Routers;
-            DestinationRouterListView.DisplayMemberPath = "Router.Name";
-        }
-
-        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            var newMousePosition = e.GetPosition(MainCanvas);
-
-            //Moving highlighted routers if left mouse button 
-            //is pressed while mouse is being moved
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                var notHighlighted = (from router in WpfRouter.Routers
-                                      where WpfRouter.HighlightedRouters.Contains(router)
-                                      select router).ToList();
-                //Images won't be moved if button was released 
-                //and then mouse was clicked outside of all routers
-                if (newMousePosition.IsOnAnyImage(notHighlighted))
-                {
-                    var offsetAmmount = new System.Windows.Point(
-                                            newMousePosition.X - previousMousePosition.X,
-                                            newMousePosition.Y - previousMousePosition.Y
-                                        );
-                    WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
-                }
-            }
-
-            previousMousePosition = new Point((int)newMousePosition.X, (int)newMousePosition.Y);
-        }
-
-        private async void SendMessageButton_Click(object sender, RoutedEventArgs e)
-        {
-            var source = WpfRouter.GetRouter((SourceRouterListView.SelectedItem as WpfRouter).Router.Name, true);
-            var destination = WpfRouter.GetRouter((DestinationRouterListView.SelectedItem as WpfRouter).Router.Name, true);
-            await VisualHelpers.SendPacket(source, destination, Canvas, this);
-        }
-
-        private void Source_Destination_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CanSendMessage =
-                (SourceRouterListView.SelectedIndex >= 0 &&
-                 DestinationRouterListView.SelectedIndex >= 0) ? true : false;
         }
 
         /// <summary>
@@ -122,11 +65,37 @@ namespace WebPacketSimulator.Wpf
                 animation.Completed -= OnCompleted;
             };
             animation.Completed += OnCompleted;
-            MessageImage.BeginAnimation(Image.MarginProperty, animation);
+            PacketImage.BeginAnimation(Image.MarginProperty, animation);
             return taskCompleted.Task;
         }
 
-        private void MainCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            var newMousePosition = e.GetPosition(MainCanvas);
+
+            //Moving highlighted routers if left mouse button 
+            //is pressed while mouse is being moved
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var highlightedRouters = (from router in WpfRouter.Routers
+                                      where WpfRouter.HighlightedRouters.Contains(router)
+                                      select router).ToList();
+                //Images won't be moved if button was released 
+                //and then mouse was clicked outside of all routers
+                if (newMousePosition.IsOnAnyImage(highlightedRouters))
+                {
+                    var offsetAmmount = new System.Windows.Point(
+                                            newMousePosition.X - previousMousePosition.X,
+                                            newMousePosition.Y - previousMousePosition.Y
+                                        );
+                    WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
+                }
+            }
+
+            previousMousePosition = new Point((int)newMousePosition.X, (int)newMousePosition.Y);
+        }
+
+        private async void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var location = e.GetPosition(MainCanvas);
 
@@ -145,7 +114,7 @@ namespace WebPacketSimulator.Wpf
                     //Highlighting/unhighlighting the clicked router if ctrl is pressed
                     if (isCtrlClicked == true)
                     {
-                        if (clickedRouter.RouterImage.Opacity == 1)
+                        if (clickedRouter.IsHighlighted == false)
                         {
                             clickedRouter.HighlightRouter();
                         }
@@ -155,7 +124,7 @@ namespace WebPacketSimulator.Wpf
                         }
                     }
                     //Unhighlighting all routers except the clicked one if ctrl isn't clicked
-                    else if (clickedRouter.RouterImage.Opacity == 1)
+                    else if (clickedRouter.IsHighlighted == false)
                     {
                         WpfRouter.HighlightedRouters.UnhighlightAllRouters();
                         clickedRouter.HighlightRouter();
@@ -164,7 +133,7 @@ namespace WebPacketSimulator.Wpf
                 #endregion
 
                 #region Line
-                if(SelectedComponent == Components.Line)
+                else if (SelectedComponent == Components.Line)
                 {
                     //If this is the first part of the connection
                     if (WpfRouter.LastClickedRouter == null)
@@ -179,25 +148,57 @@ namespace WebPacketSimulator.Wpf
                     }
                 }
                 #endregion
+
+                #region Message
+                else if (SelectedComponent == Components.Packet)
+                {
+                    if (WpfRouter.LastClickedRouter == null)
+                    {
+                        WpfRouter.LastClickedRouter = clickedRouter;
+                    }
+                    else
+                    {
+                        await VisualHelpers.SendPacket(WpfRouter.LastClickedRouter, clickedRouter, this);
+                    }
+                }
+                #endregion
             }
 
             //Creating a router if there is no router on location where mouse was clicked
             else
             {
-                var newRouter = WpfRouter.CreateRouter(location);
-
                 //Unhighlighting other routers and higlighting the new router
-                foreach (var router in WpfRouter.HighlightedRouters)
-                {
-                    router.RouterImage.Opacity = 1;
-                }
-                WpfRouter.HighlightedRouters.Clear();
+                var newRouter = WpfRouter.CreateRouter(location);
+                WpfRouter.HighlightedRouters.UnhighlightAllRouters();
                 newRouter.HighlightRouter();
 
                 //Cleanup
                 WpfRouter.Routers.Add(newRouter);
                 MainCanvas.Children.Add(newRouter.RouterImage);
                 Canvas.SetZIndex(newRouter.RouterImage, 1);
+            }
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+            WpfRouter.LastClickedRouter = null;
+            var selectedValue = ((sender as ListView).SelectedValue as Component).Text.ToString();
+            if (selectedValue.CompareTo(Component.RouterComponentText) == 0)
+            {
+                SelectedComponent = Components.Router;
+            }
+            else if (selectedValue.CompareTo(Component.LineComponentText) == 0)
+            {
+                SelectedComponent = Components.Line;
+            }
+            else if (selectedValue.CompareTo(Component.SelectComponentText) == 0) 
+            {
+                SelectedComponent = Components.Select;
+            }
+            else
+            {
+                SelectedComponent = Components.Packet;
             }
         }
     }

@@ -20,20 +20,14 @@ namespace WebPacketSimulator.Wpf
 {
     public class WpfRouter : DependencyObject
     {
-        public System.Drawing.Point Location;
-        public System.Windows.Controls.Image RouterImage =
-            new System.Windows.Controls.Image()
-            {
-                Width = RouterImageWidth,
-                Height = RouterImageHeight,
-                AllowDrop = true
-            };
+        public System.Windows.Controls.Image RouterImage;
         public Router Router { get; set; }
         public static double RouterImageWidth { get; } = 50;
         public static double RouterImageHeight { get; } = 50;
         public static List<WpfRouter> HighlightedRouters = new List<WpfRouter>();
         public static ObservableCollection<WpfRouter> Routers = new ObservableCollection<WpfRouter>();
         public static WpfRouter LastClickedRouter = null;
+        public bool IsHighlighted;
 
         #region Connection dependecy properties
         public static readonly DependencyProperty TopConnectionLocationProperty =
@@ -99,10 +93,10 @@ namespace WebPacketSimulator.Wpf
             };
             for (int i = 0; i < 2; i++)
             {
-                WpfRouter source = (i == 0) ? routerA : routerB;
-                var binding = new Binding("RouterImage.Margin.Left") { Source = source };
+                var source = (i == 0) ? routerA.RouterImage : routerB.RouterImage;
+                var binding = new Binding("Margin") { Source = source, Converter = new MarginToRouterCenter(), ConverterParameter = true };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
-                binding = new Binding("RouterImage.Margin.Top") { Source = source };
+                binding = new Binding("Margin") { Source = source, Converter = new MarginToRouterCenter(), ConverterParameter = false };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
             }
             connection.ConnectionLine.Stroke = System.Windows.Media.Brushes.Black;
@@ -111,7 +105,6 @@ namespace WebPacketSimulator.Wpf
             routerB.Router.LinkedRouters.Add(routerA.Router);
             Connections.Add(connection);
             MainWindow.Canvas.Children.Add(connection.ConnectionLine);
-            MainWindow.Canvas.Children.Add(new Line() { X1 = routerA.RouterImage.Margin.Left, Y1 = routerA.RouterImage.Margin.Top, X2 = routerB.RouterImage.Margin.Left + 50, Y2 = routerB.RouterImage.Margin.Top + 50, Stroke = System.Windows.Media.Brushes.Black, StrokeThickness = 2 });
         }
 
         /// <summary>
@@ -163,8 +156,13 @@ namespace WebPacketSimulator.Wpf
                                                (int)(location.Y - RouterImageHeight / 2));
             var newRouter = new WpfRouter()
             {
-                Location = new System.Drawing.Point((int)imageMargin.X, (int)imageMargin.Y),
-                Router = new Router()
+                Router = new Router(),
+                RouterImage = new System.Windows.Controls.Image() 
+                { 
+                    Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0), 
+                    Width = RouterImageWidth, 
+                    Height = RouterImageHeight 
+                }
             };
             newRouter.HighlightRouter();
             newRouter.Router.Name = "Test" + new Random().Next().ToString();

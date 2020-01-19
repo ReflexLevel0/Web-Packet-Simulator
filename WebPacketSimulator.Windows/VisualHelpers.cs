@@ -64,6 +64,7 @@ namespace WebPacketSimulator.Wpf
         /// <param name="router"> Router to be highlighted </param>
         public static void HighlightRouter(this WpfRouter router)
         {
+            router.IsHighlighted = true;
             router.RouterImage.Source = new BitmapImage(new Uri("HighlightedRouter.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Add(router);
         }
@@ -86,6 +87,7 @@ namespace WebPacketSimulator.Wpf
         /// <param name="router"> Router to be unhighlighted </param>
         public static void UnhighlightRouter(this WpfRouter router)
         {
+            router.IsHighlighted = false;
             router.RouterImage.Source = new BitmapImage(new Uri("Router.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Remove(router);
         }
@@ -124,16 +126,15 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
-        /// <param name="canvas"> Canvas with all controls </param>
-        public async static Task SendPacket(WpfRouter source, WpfRouter destination, Canvas canvas, MainWindow mainWindow)
+        public async static Task SendPacket(WpfRouter source, WpfRouter destination, MainWindow mainWindow)
         {
             //Getting path to destination and setting up message image
             var path = source.Router.GetPathToRouter(WpfRouter.GetRouters().ToList(),
                                                      destination.Router);
             path.RemoveAt(0);
-            var messageImage = MainWindow.MessageImage;
+            var messageImage = MainWindow.PacketImage;
             messageImage.Margin = source.RouterImage.Margin;
-            canvas.Children.Add(messageImage);
+            MainWindow.Canvas.Children.Add(messageImage);
             Canvas.SetZIndex(messageImage, 1);
 
             //Animating the message
@@ -150,7 +151,7 @@ namespace WebPacketSimulator.Wpf
                 await mainWindow.Animate(animation);
                 messageImage.Margin = wpfRouter.RouterImage.Margin;
             }
-            canvas.Children.Remove(messageImage);
+            MainWindow.Canvas.Children.Remove(messageImage);
         }
     }
 }

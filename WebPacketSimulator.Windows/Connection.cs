@@ -15,9 +15,5 @@ namespace WebPacketSimulator.Wpf
         public WpfRouter SourceRouter;
         public WpfRouter DestinationRouter;
         public Line ConnectionLine = new Line();
-        public static string TopConnectionTag = "Top";
-        public static string RightConnectionTag = "Right";
-        public static string LeftConnectionTag = "Left";
-        public static string BottomConnectionTag = "Bottom";
     }
 }

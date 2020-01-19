@@ -13,7 +13,7 @@
             <Setter Property="ImageHeight" Value="{x:Static local:WpfRouter.RouterImageHeight}"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -21,30 +21,31 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Canvas x:Name="MainCanvas" 
-                MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"
+                MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
                 MouseMove="MainCanvas_MouseMove"
                 Background="White" 
                 Grid.RowSpan="3">
         </Canvas>
-        <StackPanel Grid.Column="1" Orientation="Vertical">
-            <TextBlock Text="Source router:"/>
-            <ComboBox x:Name="SourceRouterListView" SelectionChanged="Source_Destination_SelectionChanged"/>
-            <TextBlock Text="Destination router:"/>
-            <ComboBox x:Name="DestinationRouterListView" SelectionChanged="Source_Destination_SelectionChanged"/>
-            <Button Content="Send message" Click="SendMessageButton_Click" IsEnabled="{Binding CanSendMessage}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" 
-                    Grid.Row="1"
-                    Grid.ColumnSpan="2">
+        <ListView Grid.Row="1"
+                  Grid.ColumnSpan="2"
+                  SelectedIndex="0"
+                  SelectionChanged="ListView_SelectionChanged">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal">
+                    </StackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <local:Component ImageSource="Router.png"
-                             Text="Router"/>
+                             Text="{x:Static local:Component.RouterComponentText}"/>
             <local:Component ImageSource="Line.png"
-                             Text="Line"/>
+                             Text="{x:Static local:Component.LineComponentText}"/>
             <local:Component ImageSource="Cursor.png"
-                             Text="Select"/>
-        </StackPanel>
+                             Text="{x:Static local:Component.SelectComponentText}"/>
+            <local:Component ImageSource="Packet.png"
+                             Text="{x:Static local:Component.PacketComponentText}"/>
+        </ListView>
     </Grid>
 </Window>

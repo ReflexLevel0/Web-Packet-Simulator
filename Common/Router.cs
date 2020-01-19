@@ -107,17 +107,5 @@ namespace WebPacketSimulator.Common
             }
             return result.PathToDestination;
         }
-
-        //static void PrintPath(Path path)
-        //{
-        //    Console.WriteLine("Source: {0}", path.SourceRouter.Name);
-        //    Console.WriteLine("Destination: {0}", path.DestinationRouter.Name);
-        //    foreach (var router in path.PathToDestination)
-        //    {
-        //        Console.Write("{0} ", router.Name);
-        //    }
-        //    Console.WriteLine();
-        //    Console.WriteLine();
-        //}
     }
 }

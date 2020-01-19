@@ -21,6 +21,7 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class Component : UserControl, INotifyPropertyChanged
     {
+        #region Local variables
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         string imageSource;
@@ -29,7 +30,7 @@ namespace WebPacketSimulator.Wpf
             get => imageSource;
             set
             {
-                if(imageSource != value)
+                if (imageSource != value)
                 {
                     imageSource = value;
                     PropertyChanged(this, new PropertyChangedEventArgs(nameof(ImageSource)));
@@ -66,6 +67,14 @@ namespace WebPacketSimulator.Wpf
             get => (double)GetValue(ImageHeightProperty);
             set => SetValue(ImageHeightProperty, value);
         }
+        #endregion
+
+        #region Static variables
+        public static string RouterComponentText { get; set; } = "Router";
+        public static string LineComponentText { get; set; } = "Line";
+        public static string SelectComponentText { get; set; } = "Cursor";
+        public static string PacketComponentText { get; set; } = "Message";
+        #endregion
 
         public Component()
         {
