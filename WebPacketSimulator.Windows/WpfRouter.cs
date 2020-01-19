@@ -79,12 +79,15 @@ namespace WebPacketSimulator.Wpf
         /// <returns> Object that represents the connection between the two connected routers </returns>
         public static void ConnectRouters(WpfRouter routerA, WpfRouter routerB)
         {
+            //Setup
+            LastClickedRouter = null;
             if (routerA == routerB)
             {
                 throw new Exception("Can't connect the router to itself!");
             }
-
             DisconnectRouters(routerA, routerB);
+
+            //Creating the connection
             var connection = new Connection()
             {
                 SourceRouter = routerA,
@@ -101,6 +104,8 @@ namespace WebPacketSimulator.Wpf
             }
             connection.ConnectionLine.Stroke = System.Windows.Media.Brushes.Black;
             connection.ConnectionLine.StrokeThickness = 2;
+            
+            //Connecting the routers
             routerA.Router.LinkedRouters.Add(routerB.Router);
             routerB.Router.LinkedRouters.Add(routerA.Router);
             Connections.Add(connection);
@@ -212,5 +217,15 @@ namespace WebPacketSimulator.Wpf
         public static IEnumerable<Router> GetRouters() =>
             from router in Routers
             select router.Router;
+
+        /// <summary>
+        /// This function deletes this router and removes it from the canvas
+        /// </summary>
+        public void Delete()
+        {
+            MainWindow.Canvas.Children.Remove(RouterImage);
+            this.UnhighlightRouter();
+            Routers.Remove(this);
+        }
     }
 }

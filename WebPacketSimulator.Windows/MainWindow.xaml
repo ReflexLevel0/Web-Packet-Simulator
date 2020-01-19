@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        KeyUp="Window_KeyUp">
 
     <Window.Resources>
         <Style TargetType="local:Component">
@@ -23,6 +24,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Canvas x:Name="MainCanvas" 
+                MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"
                 MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
                 MouseMove="MainCanvas_MouseMove"
                 Background="White" 
