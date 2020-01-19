@@ -6,16 +6,25 @@
         xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <Window.Resources>
+        <Style TargetType="local:Component">
+            <Setter Property="ImageWidth" Value="{x:Static local:WpfRouter.RouterImageWidth}"/>
+            <Setter Property="ImageHeight" Value="{x:Static local:WpfRouter.RouterImageHeight}"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Canvas x:Name="MainCanvas" 
-                MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
+                MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"
                 MouseMove="MainCanvas_MouseMove"
                 Background="White" 
                 Grid.RowSpan="3">
@@ -26,6 +35,16 @@
             <TextBlock Text="Destination router:"/>
             <ComboBox x:Name="DestinationRouterListView" SelectionChanged="Source_Destination_SelectionChanged"/>
             <Button Content="Send message" Click="SendMessageButton_Click" IsEnabled="{Binding CanSendMessage}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" 
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2">
+            <local:Component ImageSource="Router.png"
+                             Text="Router"/>
+            <local:Component ImageSource="Line.png"
+                             Text="Line"/>
+            <local:Component ImageSource="Cursor.png"
+                             Text="Select"/>
         </StackPanel>
     </Grid>
 </Window>

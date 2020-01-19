@@ -49,9 +49,12 @@ namespace WebPacketSimulator.Wpf
         public static Image MessageImage = new Image()
         {
             Source = new BitmapImage(new Uri("Packet.png", UriKind.Relative)),
-            Width = 32,
-            Height = 32
+            Width = 24,
+            Height = 24
         };
+
+        enum Components { Select, Router, Line }
+        Components SelectedComponent = Components.Select;
 
         public MainWindow()
         {
@@ -62,58 +65,6 @@ namespace WebPacketSimulator.Wpf
             SourceRouterListView.DisplayMemberPath = "Router.Name";
             DestinationRouterListView.ItemsSource = WpfRouter.Routers;
             DestinationRouterListView.DisplayMemberPath = "Router.Name";
-        }
-
-        private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var location = e.GetPosition(MainCanvas);
-
-            //Highlighting the router on the click position
-            WpfRouter highlightedRouter = location.GetRouterOnLocation();
-            bool clickedOnRouter = highlightedRouter != null;
-            if (clickedOnRouter)
-            {
-                bool isCtrlClicked =
-                    Keyboard.IsKeyDown(Key.LeftCtrl) == true ||
-                    Keyboard.IsKeyDown(Key.RightCtrl) == true;
-
-                //Highlighting/unhighlighting the clicked router if ctrl is pressed
-                if (isCtrlClicked == true)
-                {
-                    if (highlightedRouter.RouterImage.Opacity == 1)
-                    {
-                        highlightedRouter.HighlightRouter();
-                    }
-                    else
-                    {
-                        highlightedRouter.UnhighlightRouter();
-                    }
-                }
-                //Unhighlighting all routers except the clicked one if ctrl isn't clicked
-                else if (highlightedRouter.RouterImage.Opacity == 1)
-                {
-                    WpfRouter.HighlightedRouters.UnhighlightAllRouters();
-                    highlightedRouter.HighlightRouter();
-                }
-            }
-
-            //Creating a router if there is no router on location where mouse was clicked
-            else
-            {
-                var newRouter = WpfRouter.CreateRouter(location);
-
-                //Unhighlighting other routers and higlighting the new router
-                foreach (var router in WpfRouter.HighlightedRouters)
-                {
-                    router.RouterImage.Opacity = 1;
-                }
-                WpfRouter.HighlightedRouters.Clear();
-                newRouter.HighlightRouter();
-
-                //Cleanup
-                WpfRouter.Routers.Add(newRouter);
-                MainCanvas.Children.Add(newRouter.RouterImage);
-            }
         }
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -173,6 +124,81 @@ namespace WebPacketSimulator.Wpf
             animation.Completed += OnCompleted;
             MessageImage.BeginAnimation(Image.MarginProperty, animation);
             return taskCompleted.Task;
+        }
+
+        private void MainCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var location = e.GetPosition(MainCanvas);
+
+            //Highlighting the router on the click position
+            WpfRouter clickedRouter = location.GetRouterOnLocation();
+            bool clickedOnRouter = clickedRouter != null;
+            if (clickedOnRouter)
+            {
+                #region Router
+                if (SelectedComponent == Components.Router)
+                {
+                    bool isCtrlClicked =
+                        Keyboard.IsKeyDown(Key.LeftCtrl) == true ||
+                        Keyboard.IsKeyDown(Key.RightCtrl) == true;
+
+                    //Highlighting/unhighlighting the clicked router if ctrl is pressed
+                    if (isCtrlClicked == true)
+                    {
+                        if (clickedRouter.RouterImage.Opacity == 1)
+                        {
+                            clickedRouter.HighlightRouter();
+                        }
+                        else
+                        {
+                            clickedRouter.UnhighlightRouter();
+                        }
+                    }
+                    //Unhighlighting all routers except the clicked one if ctrl isn't clicked
+                    else if (clickedRouter.RouterImage.Opacity == 1)
+                    {
+                        WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+                        clickedRouter.HighlightRouter();
+                    }
+                }
+                #endregion
+
+                #region Line
+                if(SelectedComponent == Components.Line)
+                {
+                    //If this is the first part of the connection
+                    if (WpfRouter.LastClickedRouter == null)
+                    {
+                        WpfRouter.LastClickedRouter = clickedRouter;
+                    }
+                    //If this is second (last) part of the connection
+                    else
+                    {
+                        WpfRouter.ConnectRouters(WpfRouter.LastClickedRouter, clickedRouter);
+                        WpfRouter.LastClickedRouter = null;
+                    }
+                }
+                #endregion
+            }
+
+            //Creating a router if there is no router on location where mouse was clicked
+            else
+            {
+                var newRouter = WpfRouter.CreateRouter(location);
+
+                //Unhighlighting other routers and higlighting the new router
+                foreach (var router in WpfRouter.HighlightedRouters)
+                {
+                    router.RouterImage.Opacity = 1;
+                }
+                WpfRouter.HighlightedRouters.Clear();
+                newRouter.HighlightRouter();
+
+                //Cleanup
+                WpfRouter.Routers.Add(newRouter);
+                MainCanvas.Children.Add(newRouter.RouterImage);
+                Canvas.SetZIndex(newRouter.RouterImage, 1);
+            }
         }
     }
 }

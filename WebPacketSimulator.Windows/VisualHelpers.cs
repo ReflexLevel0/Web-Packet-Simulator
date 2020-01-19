@@ -20,7 +20,7 @@ namespace WebPacketSimulator.Wpf
         /// <param name="clickLocation"> Click location (relative to image's parent (canvas)) </param>
         /// <param name="image"> Image which is being tested </param>
         /// <returns></returns>
-        public static bool IsOnImage(this Point clickLocation, Canvas image) =>
+        public static bool IsOnImage(this Point clickLocation, Image image) =>
             image.Margin.Left <= clickLocation.X &&
             image.Margin.Left + image.ActualWidth >= clickLocation.X &&
             image.Margin.Top <= clickLocation.Y &&
@@ -64,7 +64,7 @@ namespace WebPacketSimulator.Wpf
         /// <param name="router"> Router to be highlighted </param>
         public static void HighlightRouter(this WpfRouter router)
         {
-            router.RouterImage.Opacity = WpfRouter.HighlightedImageOpacity;
+            router.RouterImage.Source = new BitmapImage(new Uri("HighlightedRouter.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Add(router);
         }
 
@@ -86,7 +86,7 @@ namespace WebPacketSimulator.Wpf
         /// <param name="router"> Router to be unhighlighted </param>
         public static void UnhighlightRouter(this WpfRouter router)
         {
-            router.RouterImage.Opacity = 1;
+            router.RouterImage.Source = new BitmapImage(new Uri("Router.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Remove(router);
         }
 

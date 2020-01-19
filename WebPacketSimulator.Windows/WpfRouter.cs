@@ -21,13 +21,19 @@ namespace WebPacketSimulator.Wpf
     public class WpfRouter : DependencyObject
     {
         public System.Drawing.Point Location;
-        public Canvas RouterImage;
+        public System.Windows.Controls.Image RouterImage =
+            new System.Windows.Controls.Image()
+            {
+                Width = RouterImageWidth,
+                Height = RouterImageHeight,
+                AllowDrop = true
+            };
         public Router Router { get; set; }
-        public static Size RouterImageSize = new Size(50, 50);
+        public static double RouterImageWidth { get; } = 50;
+        public static double RouterImageHeight { get; } = 50;
         public static List<WpfRouter> HighlightedRouters = new List<WpfRouter>();
         public static ObservableCollection<WpfRouter> Routers = new ObservableCollection<WpfRouter>();
         public static WpfRouter LastClickedRouter = null;
-        public static double HighlightedImageOpacity = 0.5;
 
         #region Connection dependecy properties
         public static readonly DependencyProperty TopConnectionLocationProperty =
@@ -72,105 +78,62 @@ namespace WebPacketSimulator.Wpf
         #endregion
 
         /// <summary>
-        /// This function updates connection locations for the current router
-        /// </summary>
-        public void UpdateConnectionLocations()
-        {
-            //Getting all connections
-            List<Ellipse> connections = new List<Ellipse>();
-            foreach (var child in RouterImage.Children)
-            {
-                Ellipse circle = child as Ellipse;
-                if (circle != null)
-                {
-                    connections.Add(circle);
-                }
-            }
-
-            //Updating connection locations
-            int connectionWidth = (int)ConnectionImageSize.Width;
-            int connectionHeight = (int)ConnectionImageSize.Height;
-            connections = connections.OrderBy(connection => connection.Margin.Top)
-                                     .ThenBy(connection => connection.Margin.Left)
-                                     .ToList();
-            for (int i = 0; i < 4; i++)
-            {
-                int left = (int)(RouterImage.Margin.Left +
-                                 connections[i].Margin.Left +
-                                 connectionWidth / 2);
-                int top = (int)(RouterImage.Margin.Top +
-                                connections[i].Margin.Top +
-                                connectionHeight / 2);
-                switch (i)
-                {
-                    case 0:
-                        TopConnectionLocation = new Point(left, top);
-                        break;
-                    case 1:
-                        LeftConnectionLocation = new Point(left, top);
-                        break;
-                    case 2:
-                        RightConnectionLocation = new Point(left, top);
-                        break;
-                    case 3:
-                        BottomConnectionLocation = new Point(left, top);
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
         /// This function is used for connecting 2 routers
         /// </summary>
         /// <param name="routerA"> First router </param>
         /// <param name="routerB"> Second router </param>
-        /// <param name="routerAConnectionLocation"> Connection location for the first router </param>
-        /// <param name="routerBConnectionLocation"> Connection location for the second router </param>
-        /// <returns></returns>
-        public static Connection ConnectRouters(WpfRouter routerA, WpfRouter routerB, ConnectionLocations routerAConnectionLocation, ConnectionLocations routerBConnectionLocation)
+        /// <returns> Object that represents the connection between the two connected routers </returns>
+        public static void ConnectRouters(WpfRouter routerA, WpfRouter routerB)
         {
-            if(routerA == routerB)
+            if (routerA == routerB)
             {
                 throw new Exception("Can't connect the router to itself!");
             }
 
+            DisconnectRouters(routerA, routerB);
             var connection = new Connection()
             {
                 SourceRouter = routerA,
                 DestinationRouter = routerB,
-                SourcePointLocation = routerAConnectionLocation,
-                DestinationPointLocation = routerBConnectionLocation,
                 ConnectionLine = new Line()
             };
             for (int i = 0; i < 2; i++)
             {
-                string pathToProperty = "";
-                switch ((i == 0) ? routerAConnectionLocation : routerBConnectionLocation)
-                {
-                    case ConnectionLocations.Bottom:
-                        pathToProperty = nameof(WpfRouter.BottomConnectionLocation);
-                        break;
-                    case ConnectionLocations.Left:
-                        pathToProperty = nameof(WpfRouter.LeftConnectionLocation);
-                        break;
-                    case ConnectionLocations.Right:
-                        pathToProperty = nameof(WpfRouter.RightConnectionLocation);
-                        break;
-                    case ConnectionLocations.Top:
-                        pathToProperty = nameof(WpfRouter.TopConnectionLocation);
-                        break;
-                }
                 WpfRouter source = (i == 0) ? routerA : routerB;
-                var binding = new Binding(pathToProperty + ".X") { Source = source };
+                var binding = new Binding("RouterImage.Margin.Left") { Source = source };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
-                binding = new Binding(pathToProperty + ".Y") { Source = source };
+                binding = new Binding("RouterImage.Margin.Top") { Source = source };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
             }
             connection.ConnectionLine.Stroke = System.Windows.Media.Brushes.Black;
             connection.ConnectionLine.StrokeThickness = 2;
             routerA.Router.LinkedRouters.Add(routerB.Router);
             routerB.Router.LinkedRouters.Add(routerA.Router);
-            return connection;
+            Connections.Add(connection);
+            MainWindow.Canvas.Children.Add(connection.ConnectionLine);
+            MainWindow.Canvas.Children.Add(new Line() { X1 = routerA.RouterImage.Margin.Left, Y1 = routerA.RouterImage.Margin.Top, X2 = routerB.RouterImage.Margin.Left + 50, Y2 = routerB.RouterImage.Margin.Top + 50, Stroke = System.Windows.Media.Brushes.Black, StrokeThickness = 2 });
+        }
+
+        /// <summary>
+        /// This function is used for disconnecting 2 routers
+        /// </summary>
+        /// <param name="routerA"> First router </param>
+        /// <param name="routerB"> Second router </param>
+        /// <returns></returns>
+        public static void DisconnectRouters(WpfRouter routerA, WpfRouter routerB)
+        {
+            routerA.Router.LinkedRouters.Remove(routerB.Router);
+            routerB.Router.LinkedRouters.Remove(routerA.Router);
+            var connectionsToRemove = (from connection in Connections
+                                       where
+        (connection.SourceRouter == routerA && connection.DestinationRouter == routerB) ||
+        (connection.SourceRouter == routerB && connection.DestinationRouter == routerA)
+                                       select connection).ToList();
+            foreach (var _connection in connectionsToRemove)
+            {
+                MainWindow.Canvas.Children.Remove(_connection.ConnectionLine);
+                Connections.Remove(_connection);
+            }
         }
 
         /// <summary>
@@ -186,7 +149,6 @@ namespace WebPacketSimulator.Wpf
                 int leftMargin = (int)(router.RouterImage.Margin.Left + moveAmmount.X);
                 int topMargin = (int)(router.RouterImage.Margin.Top + moveAmmount.Y);
                 router.RouterImage.Margin = new Thickness(leftMargin, topMargin, 0, 0);
-                router.UpdateConnectionLocations();
             }
         }
 
@@ -197,95 +159,16 @@ namespace WebPacketSimulator.Wpf
         public static WpfRouter CreateRouter(Point location)
         {
             //Creating router image and setting margins
-            Point imageMargin = new Point((int)(location.X - RouterImageSize.Width / 2),
-                                               (int)(location.Y - RouterImageSize.Height / 2));
+            Point imageMargin = new Point((int)(location.X - RouterImageWidth / 2),
+                                               (int)(location.Y - RouterImageHeight / 2));
             var newRouter = new WpfRouter()
             {
                 Location = new System.Drawing.Point((int)imageMargin.X, (int)imageMargin.Y),
-                RouterImage = new Canvas(),
                 Router = new Router()
             };
-            var image = new System.Windows.Controls.Image()
-            {
-                Source = new BitmapImage(new Uri("Router.png", UriKind.Relative)),
-                Width = RouterImageSize.Width,
-                Height = RouterImageSize.Height
-            };
-            image.Margin = new Thickness(
-                    ConnectionImageSize.Width / 2,
-                    ConnectionImageSize.Height / 2,
-                    ConnectionImageSize.Width / 2,
-                    ConnectionImageSize.Height / 2);
-            newRouter.RouterImage.Children.Add(image);
-            newRouter.RouterImage.Width = RouterImageSize.Width + ConnectionImageSize.Width;
-            newRouter.RouterImage.Height = RouterImageSize.Height + ConnectionImageSize.Height;
-            newRouter.RouterImage.Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0);
-
-            //Adding circles to router image (so other routers can be connected to it)
-            for (int i = 0; i < 4; i++)
-            {
-                double left = 0;
-                double top = 0;
-                string tag = "";
-                switch (i)
-                {
-                    case 0:
-                        left = newRouter.RouterImage.Width / 2 - ConnectionImageSize.Width / 2;
-                        tag = TopConnectionTag;
-                        break;
-                    case 1:
-                        left = newRouter.RouterImage.Width - ConnectionImageSize.Width;
-                        top = newRouter.RouterImage.Height / 2 - ConnectionImageSize.Height / 2;
-                        tag = RightConnectionTag;
-                        break;
-                    case 2:
-                        left = newRouter.RouterImage.Width / 2 - ConnectionImageSize.Width / 2;
-                        top = newRouter.RouterImage.Height - ConnectionImageSize.Height;
-                        tag = BottomConnectionTag;
-                        break;
-                    case 3:
-                        top = newRouter.RouterImage.Height / 2 - ConnectionImageSize.Height / 2;
-                        tag = LeftConnectionTag;
-                        break;
-                }
-                var circle = VisualHelpers.GetDefaultCircleImage(ConnectionImageSize);
-                circle.Margin = new Thickness(left, top, 0, 0);
-                circle.Tag = tag;
-                circle.Fill = System.Windows.Media.Brushes.Transparent;
-                circle.MouseLeftButtonUp += Connection_MouseLeftButtonUp;
-                newRouter.RouterImage.Children.Add(circle);
-            }
+            newRouter.HighlightRouter();
             newRouter.Router.Name = "Test" + new Random().Next().ToString();
             return newRouter;
-        }
-
-        private static void Connection_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            //If canvas hasn't been initialized
-            if(MainWindow.Canvas == null)
-            {
-                return;
-            }
-
-            WpfRouter clickedRouter = (from router in Routers
-                                       let canvas = (sender as Ellipse).Parent as Canvas
-                                       where router.RouterImage == canvas
-                                       select router).First();
-            var connectionLocation = TagToConnectionLocation((sender as Ellipse).Tag.ToString());
-
-            //If this is the first part of the connection
-            if (LastClickedRouter == null)
-            {
-                LastClickedRouter = clickedRouter;
-                LastClickedConnectionLocation = connectionLocation;
-            }
-            //If this is second (last) part of the connection
-            else
-            {
-                var connection = ConnectRouters(LastClickedRouter, clickedRouter, LastClickedConnectionLocation, connectionLocation);
-                MainWindow.Canvas.Children.Add(connection.ConnectionLine);
-                LastClickedRouter = null;
-            }
         }
 
         /// <summary>
@@ -294,11 +177,12 @@ namespace WebPacketSimulator.Wpf
         /// <param name="routerName"> Name of the reouter which will be returned </param>
         /// <param name="useForce"> Is this parameter is null, exception will be thrown if router with specified name wasn't found </param>
         /// <returns></returns>
-        public static WpfRouter GetRouter(string routerName, bool useForce) {
+        public static WpfRouter GetRouter(string routerName, bool useForce)
+        {
             WpfRouter result = (from router in Routers
                                 where router.Router.Name.CompareTo(routerName) == 0
                                 select router).FirstOrDefault();
-            if(useForce == true && result == null)
+            if (useForce == true && result == null)
             {
                 throw new Exception("Router with name \"" + routerName + "\" wasn't found!");
             }
@@ -316,7 +200,7 @@ namespace WebPacketSimulator.Wpf
             var result = (from _router in Routers
                           where _router.Router == router
                           select _router).FirstOrDefault();
-            if(result == null && useForce == true)
+            if (result == null && useForce == true)
             {
                 throw new Exception();
             }
@@ -327,7 +211,7 @@ namespace WebPacketSimulator.Wpf
         /// This function returns all routers (not WpfRouters, but ordinary Routers)
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<Router> GetRouters() => 
+        public static IEnumerable<Router> GetRouters() =>
             from router in Routers
             select router.Router;
     }

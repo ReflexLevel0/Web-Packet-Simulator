@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("packet.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cursor.png")]
 
 
