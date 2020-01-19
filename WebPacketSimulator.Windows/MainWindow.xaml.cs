@@ -32,6 +32,7 @@ namespace WebPacketSimulator.Wpf
         enum Components { Select, Router, Line, Packet }
         Components SelectedComponent = Components.Select;
         bool isAnimationRunning;
+        Line currentLine = null;
         #endregion
 
         #region Static variables
@@ -81,11 +82,11 @@ namespace WebPacketSimulator.Wpf
             if (e.LeftButton == MouseButtonState.Pressed && isAnimationRunning == false)
             {
                 var highlightedRouters = (from router in WpfRouter.Routers
-                                      where WpfRouter.HighlightedRouters.Contains(router)
-                                      select router).ToList();
+                                          where WpfRouter.HighlightedRouters.Contains(router)
+                                          select router).ToList();
                 //Images won't be moved if button was released 
                 //and then mouse was clicked outside of all routers
-                if (newMousePosition.IsOnAnyImage(highlightedRouters) || 
+                if (newMousePosition.IsOnAnyImage(highlightedRouters) ||
                     previousMousePosition.IsOnAnyImage(highlightedRouters))
                 {
                     var offsetAmmount = new System.Windows.Point(
@@ -94,6 +95,22 @@ namespace WebPacketSimulator.Wpf
                                         );
                     WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
                 }
+            }
+            else if(SelectedComponent == Components.Line && WpfRouter.LastClickedRouter != null)
+            {
+                if(currentLine == null)
+                {
+                    currentLine = new Line() 
+                    { 
+                        Stroke = Brushes.Black, 
+                        StrokeThickness = ConnectionLineWidth 
+                    };
+                    MainCanvas.Children.Add(currentLine);
+                }
+                currentLine.X1 = WpfRouter.LastClickedRouter.RouterImage.Margin.Left + WpfRouter.RouterImageWidth / 2;
+                currentLine.Y1 = WpfRouter.LastClickedRouter.RouterImage.Margin.Top + WpfRouter.RouterImageHeight / 2;
+                currentLine.X2 = newMousePosition.X;
+                currentLine.Y2 = newMousePosition.Y;
             }
 
             previousMousePosition = new System.Windows.Point((int)newMousePosition.X, (int)newMousePosition.Y);
@@ -105,46 +122,42 @@ namespace WebPacketSimulator.Wpf
 
             //Highlighting the router on the click position
             WpfRouter clickedRouter = location.GetRouterOnLocation();
-            bool clickedOnRouter = clickedRouter != null;
-            if (clickedOnRouter)
-            {
-                if (isAnimationRunning == false) 
-                {
-                    #region Line
-                    if (SelectedComponent == Components.Line)
-                    {
-                        //If this is the first part of the connection
-                        if (WpfRouter.LastClickedRouter == null)
-                        {
-                            WpfRouter.LastClickedRouter = clickedRouter;
-                        }
-                        //If this is second (last) part of the connection
-                        else
-                        {
-                            WpfRouter.ConnectRouters(WpfRouter.LastClickedRouter, clickedRouter);
-                        }
-                    }
-                    #endregion
 
-                    #region Packet
-                    else if (SelectedComponent == Components.Packet)
-                    {
-                        if (WpfRouter.LastClickedRouter == null)
-                        {
-                            WpfRouter.LastClickedRouter = clickedRouter;
-                        }
-                        else
-                        {
-                            await VisualHelpers.SendPacket(WpfRouter.LastClickedRouter, clickedRouter, this);
-                            WpfRouter.LastClickedRouter = null;
-                        }
-                    }
-                    #endregion
+            #region Line
+            if (SelectedComponent == Components.Line && isAnimationRunning == false && clickedRouter != null)
+            {
+                //If this is the first part of the connection
+                if (WpfRouter.LastClickedRouter == null)
+                {
+                    WpfRouter.LastClickedRouter = clickedRouter;
+                }
+                //If this is second (last) part of the connection
+                else
+                {
+                    Canvas.Children.Remove(currentLine);
+                    currentLine = null;
+                    WpfRouter.ConnectRouters(WpfRouter.LastClickedRouter, clickedRouter);
                 }
             }
+            #endregion
 
-            //Creating a router if there is no router on location where mouse was clicked
-            else
+            #region Packet
+            else if (SelectedComponent == Components.Packet && isAnimationRunning == false)
+            {
+                if (WpfRouter.LastClickedRouter == null)
+                {
+                    WpfRouter.LastClickedRouter = clickedRouter;
+                }
+                else
+                {
+                    await VisualHelpers.SendPacket(WpfRouter.LastClickedRouter, clickedRouter, this);
+                    WpfRouter.LastClickedRouter = null;
+                }
+            }
+            #endregion
+
+            #region Router
+            else if (SelectedComponent == Components.Router && clickedRouter == null)
             {
                 //Unhighlighting other routers and higlighting the new router
                 var newRouter = WpfRouter.CreateRouter(location);
@@ -156,6 +169,7 @@ namespace WebPacketSimulator.Wpf
                 MainCanvas.Children.Add(newRouter.RouterImage);
                 Canvas.SetZIndex(newRouter.RouterImage, 1);
             }
+            #endregion
         }
 
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -181,7 +195,7 @@ namespace WebPacketSimulator.Wpf
                     }
                 }
                 //Unhighlighting all routers except the clicked one if ctrl isn't clicked
-                else if (clickedRouter.IsHighlighted == false)
+                else
                 {
                     WpfRouter.HighlightedRouters.UnhighlightAllRouters();
                     clickedRouter.HighlightRouter();
@@ -202,7 +216,7 @@ namespace WebPacketSimulator.Wpf
             {
                 SelectedComponent = Components.Line;
             }
-            else if (selectedValue.CompareTo(Component.SelectComponentText) == 0) 
+            else if (selectedValue.CompareTo(Component.SelectComponentText) == 0)
             {
                 SelectedComponent = Components.Select;
             }
@@ -214,9 +228,9 @@ namespace WebPacketSimulator.Wpf
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Delete)
+            if (e.Key == Key.Delete)
             {
-                var response = MessageBox.Show("Are you sure that you want to delete selected objects?",
+                var response = MessageBox.Show("Are you sure that you want to delete the selected objects?",
                                                    "", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (response == MessageBoxResult.Yes)
                 {
@@ -224,6 +238,21 @@ namespace WebPacketSimulator.Wpf
                     {
                         WpfRouter.HighlightedRouters[0].Delete();
                     }
+                    while(Connections.Count > 0)
+                    {
+                        Connections[0].Delete();
+                    }
+                }
+            }
+            else if(e.Key == Key.Escape)
+            {
+                WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+                Connection.HighlightedLines.UnhighlightAllLines();
+                if(currentLine != null)
+                {
+                    MainCanvas.Children.Remove(currentLine);
+                    WpfRouter.LastClickedRouter = null;
+                    currentLine = null;
                 }
             }
         }

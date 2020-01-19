@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -152,6 +153,50 @@ namespace WebPacketSimulator.Wpf
                 messageImage.Margin = wpfRouter.RouterImage.Margin;
             }
             MainWindow.Canvas.Children.Remove(messageImage);
+        }
+
+        /// <summary>
+        /// This function highlights the line
+        /// </summary>
+        /// <param name="connectionLine"> Line to be highlighted </param>
+        public static void HighlightLine(this Line connectionLine)
+        {
+            connectionLine.Opacity = Connection.HighlightedConnectionLineOpacity;
+            Connection.HighlightedLines.Add(connectionLine);
+        }
+
+        /// <summary>
+        /// This function highlights all lines in the list
+        /// </summary>
+        /// <param name="lines"> Lines to be highlighted </param>
+        public static void HighlightAllLines(this IEnumerable<Line> lines)
+        {
+            foreach(var line in lines)
+            {
+                line.HighlightLine();
+            }
+        }
+
+        /// <summary>
+        /// This function unhighlights the line
+        /// </summary>
+        /// <param name="connectionLine"> Line to be unhighlighted </param>
+        public static void UnhighlightLine(this Line connectionLine)
+        {
+            connectionLine.Opacity = 1;
+            Connection.HighlightedLines.Remove(connectionLine);
+        }
+
+        /// <summary>
+        /// This function unhighlights all lines in the list
+        /// </summary>
+        /// <param name="lines"> Lines to be unhighlighted </param>
+        public static void UnhighlightAllLines(this IEnumerable<Line> lines)
+        {
+            while (lines.FirstOrDefault() != null)
+            {
+                lines.First().UnhighlightLine();
+            }
         }
     }
 }

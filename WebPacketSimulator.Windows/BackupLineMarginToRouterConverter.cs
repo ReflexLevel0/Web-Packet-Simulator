@@ -9,14 +9,14 @@ using System.Windows.Data;
 
 namespace WebPacketSimulator.Wpf
 {
-    class MarginToRouterCenter : IValueConverter
+    class BackupLineMarginToRouterConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Thickness margin = (Thickness)(value as Thickness?);
-            
+
             //X position of the router's center will be returned if the passed parameter is true
-            if((parameter as bool?) == true)
+            if ((parameter as bool?) == true)
             {
                 return margin.Left + WpfRouter.RouterImageWidth / 2;
             }

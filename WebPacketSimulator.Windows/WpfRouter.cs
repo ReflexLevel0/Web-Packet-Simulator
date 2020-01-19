@@ -9,12 +9,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WebPacketSimulator.Common;
 using static WebPacketSimulator.Wpf.Connection;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
+using Color = System.Windows.Media.Color;
+using System.Diagnostics;
 
 namespace WebPacketSimulator.Wpf
 {
@@ -92,24 +96,33 @@ namespace WebPacketSimulator.Wpf
             {
                 SourceRouter = routerA,
                 DestinationRouter = routerB,
-                ConnectionLine = new Line()
+                ConnectionLine = new Line(),
+                BackupConnectionLine = new Line()
             };
             for (int i = 0; i < 2; i++)
             {
                 var source = (i == 0) ? routerA.RouterImage : routerB.RouterImage;
-                var binding = new Binding("Margin") { Source = source, Converter = new MarginToRouterCenter(), ConverterParameter = true };
+                var binding = new Binding("Margin") { Source = source, Converter = new LineMarginToRouterCenter(), ConverterParameter = true };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
-                binding = new Binding("Margin") { Source = source, Converter = new MarginToRouterCenter(), ConverterParameter = false };
+                binding = new Binding("Margin") { Source = source, Converter = new LineMarginToRouterCenter(), ConverterParameter = false };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
+                binding = new Binding("Margin") { Source = source, Converter = new BackupLineMarginToRouterConverter(), ConverterParameter = true };
+                connection.BackupConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
+                binding = new Binding("Margin") { Source = source, Converter = new BackupLineMarginToRouterConverter(), ConverterParameter = false };
+                connection.BackupConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
             }
             connection.ConnectionLine.Stroke = System.Windows.Media.Brushes.Black;
-            connection.ConnectionLine.StrokeThickness = 2;
-            
+            connection.ConnectionLine.StrokeThickness = ConnectionLineWidth;
+            connection.BackupConnectionLine.Stroke = System.Windows.Media.Brushes.Transparent;
+            connection.BackupConnectionLine.StrokeThickness = BackupConnectionLineWidth;
+            connection.BackupConnectionLine.MouseLeftButtonUp += ConnectionLine_MouseLeftButtonUp;
+
             //Connecting the routers
             routerA.Router.LinkedRouters.Add(routerB.Router);
             routerB.Router.LinkedRouters.Add(routerA.Router);
             Connections.Add(connection);
             MainWindow.Canvas.Children.Add(connection.ConnectionLine);
+            MainWindow.Canvas.Children.Add(connection.BackupConnectionLine);
         }
 
         /// <summary>
@@ -162,11 +175,11 @@ namespace WebPacketSimulator.Wpf
             var newRouter = new WpfRouter()
             {
                 Router = new Router(),
-                RouterImage = new System.Windows.Controls.Image() 
-                { 
-                    Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0), 
-                    Width = RouterImageWidth, 
-                    Height = RouterImageHeight 
+                RouterImage = new System.Windows.Controls.Image()
+                {
+                    Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0),
+                    Width = RouterImageWidth,
+                    Height = RouterImageHeight
                 }
             };
             newRouter.HighlightRouter();
@@ -226,6 +239,42 @@ namespace WebPacketSimulator.Wpf
             MainWindow.Canvas.Children.Remove(RouterImage);
             this.UnhighlightRouter();
             Routers.Remove(this);
+        }
+
+        /// <summary>
+        /// This function gets called when the connection gets clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void ConnectionLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("Y");
+
+            var clickedLine = (sender as Line);
+            var connection = (from _connection in Connections
+                              where _connection.ConnectionLine == clickedLine || 
+                              _connection.BackupConnectionLine == clickedLine
+                              select _connection).First();
+            clickedLine = connection.ConnectionLine;
+            bool isCtrlClicked = Keyboard.IsKeyDown(Key.LeftCtrl) == true ||
+                                 Keyboard.IsKeyDown(Key.RightCtrl) == true;
+            if (isCtrlClicked)
+            {
+                if(clickedLine.Opacity == 1)
+                {
+                    connection.ConnectionLine.HighlightLine();
+                }
+                else
+                {
+                    connection.ConnectionLine.UnhighlightLine();
+                }
+            }
+            else
+            {
+                HighlightedLines.UnhighlightAllLines();
+                connection.ConnectionLine.HighlightLine();
+            }
+            e.Handled = true;
         }
     }
 }

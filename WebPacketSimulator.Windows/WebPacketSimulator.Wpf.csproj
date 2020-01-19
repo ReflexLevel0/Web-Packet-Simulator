@@ -59,7 +59,8 @@
     <Compile Include="Component.xaml.cs">
       <DependentUpon>Component.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MarginToRouterCenter.cs" />
+    <Compile Include="BackupLineMarginToRouterConverter.cs" />
+    <Compile Include="LineMarginToRouterCenter.cs" />
     <Compile Include="VisualHelpers.cs" />
     <Compile Include="WpfRouter.cs" />
     <Page Include="Component.xaml">
