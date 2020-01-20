@@ -157,8 +157,8 @@ namespace WebPacketSimulator.Wpf
             for (int i = 0; i < routers.Count; i++)
             {
                 var router = routers[i];
-                int leftMargin = (int)(router.RouterImage.Margin.Left + moveAmmount.X);
-                int topMargin = (int)(router.RouterImage.Margin.Top + moveAmmount.Y);
+                double leftMargin = router.RouterImage.Margin.Left + moveAmmount.X;
+                double topMargin = router.RouterImage.Margin.Top + moveAmmount.Y;
                 router.RouterImage.Margin = new Thickness(leftMargin, topMargin, 0, 0);
             }
         }

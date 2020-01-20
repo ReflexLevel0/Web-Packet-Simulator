@@ -40,13 +40,13 @@
                     </StackPanel>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-            <local:Component ImageSource="Router.png"
+            <local:Component ImageSource="/Images/Router.png"
                              Text="{x:Static local:Component.RouterComponentText}"/>
-            <local:Component ImageSource="Line.png"
+            <local:Component ImageSource="/Images/Line.png"
                              Text="{x:Static local:Component.LineComponentText}"/>
-            <local:Component ImageSource="Cursor.png"
+            <local:Component ImageSource="/Images/Cursor.png"
                              Text="{x:Static local:Component.SelectComponentText}"/>
-            <local:Component ImageSource="Packet.png"
+            <local:Component ImageSource="/Images/Packet.png"
                              Text="{x:Static local:Component.PacketComponentText}"/>
         </ListView>
     </Grid>

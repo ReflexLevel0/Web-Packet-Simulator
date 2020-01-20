@@ -60,52 +60,6 @@ namespace WebPacketSimulator.Wpf
         }
 
         /// <summary>
-        /// This function highlights the selected router
-        /// </summary>
-        /// <param name="router"> Router to be highlighted </param>
-        public static void HighlightRouter(this WpfRouter router)
-        {
-            router.IsHighlighted = true;
-            router.RouterImage.Source = new BitmapImage(new Uri("HighlightedRouter.png", UriKind.Relative));
-            WpfRouter.HighlightedRouters.Add(router);
-        }
-
-        /// <summary>
-        /// This function highlights all routers from a list of routers
-        /// </summary>
-        /// <param name="routers"> Routers to be highlighted </param>
-        public static void HighlightAllRouters(this List<WpfRouter> routers)
-        {
-            while (routers.Count != 0)
-            {
-                routers[0].HighlightRouter();
-            }
-        }
-
-        /// <summary>
-        /// This function unhighlights the selected router
-        /// </summary>
-        /// <param name="router"> Router to be unhighlighted </param>
-        public static void UnhighlightRouter(this WpfRouter router)
-        {
-            router.IsHighlighted = false;
-            router.RouterImage.Source = new BitmapImage(new Uri("Router.png", UriKind.Relative));
-            WpfRouter.HighlightedRouters.Remove(router);
-        }
-
-        /// <summary>
-        /// This function unhighlights all routers from a list of routers
-        /// </summary>
-        /// <param name="routers"> Routers to be unhighlighted </param>
-        public static void UnhighlightAllRouters(this List<WpfRouter> routers)
-        {
-            while (routers.Count != 0)
-            {
-                routers[0].UnhighlightRouter();
-            }
-        }
-
-        /// <summary>
         /// This function returns router on the chosen location (or null if there are no routers on the chosen location)
         /// </summary>
         /// <param name="location"> Location from which a router will be recieved </param>
@@ -143,16 +97,73 @@ namespace WebPacketSimulator.Wpf
             {
                 var wpfRouter = WpfRouter.GetRouter(router, true);
                 var currentMargin = wpfRouter.RouterImage.Margin;
-                var animation = new ThicknessAnimation(){
-                    From = messageImage.Margin,
-                    To = currentMargin,
-                    Duration = new Duration(TimeSpan.FromSeconds(1)),
-                    FillBehavior = FillBehavior.Stop 
+                Thickness fromThickness = new Thickness(messageImage.Margin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
+                                         messageImage.Margin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
+                                         0, 0);
+                Thickness toThickness = new Thickness(currentMargin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
+                                         currentMargin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
+                                         0, 0);
+                double xDifference = Math.Abs(toThickness.Left - fromThickness.Left);
+                double yDifference = Math.Abs(toThickness.Top - fromThickness.Top);
+                double pathLength = Math.Sqrt(xDifference * xDifference + yDifference * yDifference);
+                var animation = new ThicknessAnimation()
+                {
+                    From = fromThickness,
+                    To = toThickness,
+                    Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250)),
+                    FillBehavior = FillBehavior.Stop
                 };
                 await mainWindow.Animate(animation);
                 messageImage.Margin = wpfRouter.RouterImage.Margin;
             }
             MainWindow.Canvas.Children.Remove(messageImage);
+        }
+
+        #region Highlight/unhighlight functions
+        /// <summary>
+        /// This function highlights the selected router
+        /// </summary>
+        /// <param name="router"> Router to be highlighted </param>
+        public static void HighlightRouter(this WpfRouter router)
+        {
+            router.IsHighlighted = true;
+            router.RouterImage.Source = new BitmapImage(new Uri("/Images/HighlightedRouter.png", UriKind.Relative));
+            WpfRouter.HighlightedRouters.Add(router);
+        }
+
+        /// <summary>
+        /// This function highlights all routers from a list of routers
+        /// </summary>
+        /// <param name="routers"> Routers to be highlighted </param>
+        public static void HighlightAllRouters(this List<WpfRouter> routers)
+        {
+            while (routers.Count != 0)
+            {
+                routers[0].HighlightRouter();
+            }
+        }
+
+        /// <summary>
+        /// This function unhighlights the selected router
+        /// </summary>
+        /// <param name="router"> Router to be unhighlighted </param>
+        public static void UnhighlightRouter(this WpfRouter router)
+        {
+            router.IsHighlighted = false;
+            router.RouterImage.Source = new BitmapImage(new Uri("/Images/Router.png", UriKind.Relative));
+            WpfRouter.HighlightedRouters.Remove(router);
+        }
+
+        /// <summary>
+        /// This function unhighlights all routers from a list of routers
+        /// </summary>
+        /// <param name="routers"> Routers to be unhighlighted </param>
+        public static void UnhighlightAllRouters(this List<WpfRouter> routers)
+        {
+            while (routers.Count != 0)
+            {
+                routers[0].UnhighlightRouter();
+            }
         }
 
         /// <summary>
@@ -198,5 +209,6 @@ namespace WebPacketSimulator.Wpf
                 lines.First().UnhighlightLine();
             }
         }
+        #endregion
     }
 }

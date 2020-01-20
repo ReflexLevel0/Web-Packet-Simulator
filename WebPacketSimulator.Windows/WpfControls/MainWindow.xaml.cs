@@ -39,7 +39,7 @@ namespace WebPacketSimulator.Wpf
         public static Canvas Canvas;
         public static Image PacketImage = new Image()
         {
-            Source = new BitmapImage(new Uri("Packet.png", UriKind.Relative)),
+            Source = new BitmapImage(new Uri("/Images/Packet.png", UriKind.Relative)),
             Width = 24,
             Height = 24
         };
@@ -94,6 +94,7 @@ namespace WebPacketSimulator.Wpf
                                             newMousePosition.Y - previousMousePosition.Y
                                         );
                     WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
+                    Debug.WriteLine("{0} {1}", offsetAmmount.X, offsetAmmount.Y);
                 }
             }
             else if(SelectedComponent == Components.Line && WpfRouter.LastClickedRouter != null)
@@ -194,11 +195,13 @@ namespace WebPacketSimulator.Wpf
                         clickedRouter.UnhighlightRouter();
                     }
                 }
-                //Unhighlighting all routers except the clicked one if ctrl isn't clicked
+                //Highlighting the clicked router
                 else
                 {
-                    WpfRouter.HighlightedRouters.UnhighlightAllRouters();
-                    clickedRouter.HighlightRouter();
+                    if (clickedRouter.IsHighlighted == false)
+                    {
+                        clickedRouter.HighlightRouter();
+                    }
                 }
             }
         }
@@ -231,7 +234,7 @@ namespace WebPacketSimulator.Wpf
             if (e.Key == Key.Delete)
             {
                 var response = MessageBox.Show("Are you sure that you want to delete the selected objects?",
-                                                   "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                               "Delete query", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (response == MessageBoxResult.Yes)
                 {
                     while (WpfRouter.HighlightedRouters.Count > 0)

@@ -9,12 +9,12 @@ WebPacketSimulator.Windows
 none
 false
 DEBUG;TRACE
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\App.xaml
-2-928148153
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\App.xaml
+2-259859847
 
-11-1354144438
+11-1957780566
 16-505392970
-Component.xaml;MainWindow.xaml;
+WpfControls\Component.xaml;WpfControls\MainWindow.xaml;
 
 False
 

@@ -1,6 +1,4 @@
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Wpf.csprojAssemblyReference.cache
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\MainWindow.g.cs
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\App.g.cs
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows_MarkupCompile.cache
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows_MarkupCompile.lref
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.exe
@@ -10,12 +8,14 @@ C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacket
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\WebPacketSimulator.Windows.pdb
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\Common.dll
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\Common.pdb
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\MainWindow.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.g.resources
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Windows.Properties.Resources.resources
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Wpf.csproj.GenerateResource.cache
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WebPacketSimulator.Wpf.csproj.CopyComplete
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\Component.g.cs
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\GeneratedInternalTypeHelper.g.cs
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\Component.baml
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\App.baml
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\Component.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainWindow.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\App.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\App.baml
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\Component.baml
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainWindow.baml
