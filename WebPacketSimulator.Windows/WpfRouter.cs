@@ -33,48 +33,6 @@ namespace WebPacketSimulator.Wpf
         public static WpfRouter LastClickedRouter = null;
         public bool IsHighlighted;
 
-        #region Connection dependecy properties
-        public static readonly DependencyProperty TopConnectionLocationProperty =
-            DependencyProperty.Register(nameof(TopConnectionLocation),
-                                        typeof(Point),
-                                        typeof(WpfRouter));
-        public Point TopConnectionLocation
-        {
-            get => (Point)GetValue(TopConnectionLocationProperty);
-            set => SetValue(TopConnectionLocationProperty, value);
-        }
-
-        public static readonly DependencyProperty LeftConnectionLocationProperty =
-            DependencyProperty.Register(nameof(LeftConnectionLocation),
-                                        typeof(Point),
-                                        typeof(WpfRouter));
-        public Point LeftConnectionLocation
-        {
-            get => (Point)GetValue(LeftConnectionLocationProperty);
-            set => SetValue(LeftConnectionLocationProperty, value);
-        }
-
-        public static readonly DependencyProperty RightConnectionLocationProperty =
-            DependencyProperty.Register(nameof(RightConnectionLocation),
-                                        typeof(Point),
-                                        typeof(WpfRouter));
-        public Point RightConnectionLocation
-        {
-            get => (Point)GetValue(RightConnectionLocationProperty);
-            set => SetValue(RightConnectionLocationProperty, value);
-        }
-
-        public static readonly DependencyProperty BottomConnectionLocationProperty =
-            DependencyProperty.Register(nameof(BottomConnectionLocation),
-                                        typeof(Point),
-                                        typeof(WpfRouter));
-        public Point BottomConnectionLocation
-        {
-            get => (Point)GetValue(BottomConnectionLocationProperty);
-            set => SetValue(BottomConnectionLocationProperty, value);
-        }
-        #endregion
-
         /// <summary>
         /// This function is used for connecting 2 routers
         /// </summary>
@@ -166,15 +124,18 @@ namespace WebPacketSimulator.Wpf
         /// <summary>
         /// This function creates a router control for this router
         /// </summary>
+        /// <param name="address"> Router's IP address </param>
+        /// <param name="location"> Router's location on canvas </param>
+        /// <param name="name"> Name of the router </param>
         /// <returns></returns>
-        public static WpfRouter CreateRouter(Point location)
+        public static WpfRouter CreateRouter(Point location, string address = null, string name = null)
         {
             //Creating router image and setting margins
             Point imageMargin = new Point((int)(location.X - RouterImageWidth / 2),
                                                (int)(location.Y - RouterImageHeight / 2));
             var newRouter = new WpfRouter()
             {
-                Router = new Router(),
+                Router = new Router() { Address = address, Name = name },
                 RouterImage = new System.Windows.Controls.Image()
                 {
                     Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0),
@@ -182,8 +143,10 @@ namespace WebPacketSimulator.Wpf
                     Height = RouterImageHeight
                 }
             };
-            newRouter.HighlightRouter();
-            newRouter.Router.Name = "Test" + new Random().Next().ToString();
+            WpfRouter.Routers.Add(newRouter);
+            newRouter.UnhighlightRouter();
+            MainWindow.GetCurrentMainWindow().MainCanvas.Children.Add(newRouter.RouterImage);
+            Canvas.SetZIndex(newRouter.RouterImage, 1);
             return newRouter;
         }
 
@@ -239,6 +202,15 @@ namespace WebPacketSimulator.Wpf
             MainWindow.Canvas.Children.Remove(RouterImage);
             this.UnhighlightRouter();
             Routers.Remove(this);
+            var connections = (from connection in Connections
+                               where connection.SourceRouter == this
+                               || connection.DestinationRouter == this
+                               select connection).ToList();
+            while (connections.Count > 0)
+            {
+                connections[0].Delete();
+                connections.RemoveAt(0);
+            }
         }
 
         /// <summary>

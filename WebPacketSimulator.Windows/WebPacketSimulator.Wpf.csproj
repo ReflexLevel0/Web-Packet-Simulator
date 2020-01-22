@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FileHandler.cs" />
     <Compile Include="WpfControls\Component.xaml.cs">
       <DependentUpon>Component.xaml</DependentUpon>
     </Compile>

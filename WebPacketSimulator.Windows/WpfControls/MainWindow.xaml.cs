@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -31,8 +32,67 @@ namespace WebPacketSimulator.Wpf
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         enum Components { Select, Router, Line, Packet }
         Components SelectedComponent = Components.Select;
-        bool isAnimationRunning;
+        public static bool IsMessageAnimationRunning;
+        bool isRouterDataOpacityAnimationRunning;
         Line currentLine = null;
+
+        Visibility routerDataVisibility = Visibility.Collapsed;
+        public Visibility RouterDataVisibility
+        {
+            get => routerDataVisibility;
+            set
+            {
+                if (routerDataVisibility != value)
+                {
+                    routerDataVisibility = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(RouterDataVisibility)));
+                }
+            }
+        }
+
+        Router highlightedRouter;
+        public Router HighlightedRouter
+        {
+            get => highlightedRouter;
+            set
+            {
+                if (highlightedRouter != value)
+                {
+                    highlightedRouter = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(HighlightedRouter)));
+                }
+            }
+        }
+
+        bool isComponentMenuEnabled;
+        public bool IsComponentMenuEnabled
+        {
+            get => isComponentMenuEnabled;
+            set
+            {
+                if (isComponentMenuEnabled != value)
+                {
+                    isComponentMenuEnabled = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(IsComponentMenuEnabled)));
+                }
+            }
+        }
+
+        bool isPacketConsoleEnabled;
+        public bool IsPacketConsoleEnabled
+        {
+            get => isPacketConsoleEnabled;
+            set
+            {
+                if (isPacketConsoleEnabled != value)
+                {
+                    isPacketConsoleEnabled = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(IsPacketConsoleEnabled)));
+                }
+            }
+        }
+
+        public enum Menus { Components, PacketConsole }
         #endregion
 
         #region Static variables
@@ -50,28 +110,10 @@ namespace WebPacketSimulator.Wpf
             InitializeComponent();
             DataContext = this;
             Canvas = MainCanvas;
+            ChangeMenu(Menus.Components);
         }
 
-        /// <summary>
-        /// This function is used for animation (the task will be awaited until the animation stops)
-        /// </summary>
-        /// <param name="animation"> Animation to be executed </param>
-        /// <returns></returns>
-        public Task Animate(ThicknessAnimation animation)
-        {
-            TaskCompletionSource<bool> taskCompleted = new TaskCompletionSource<bool>();
-            EventHandler OnCompleted = null;
-            OnCompleted = delegate
-            {
-                taskCompleted.SetResult(true);
-                animation.Completed -= OnCompleted;
-                isAnimationRunning = false;
-            };
-            animation.Completed += OnCompleted;
-            isAnimationRunning = true;
-            PacketImage.BeginAnimation(Image.MarginProperty, animation);
-            return taskCompleted.Task;
-        }
+        public static MainWindow GetCurrentMainWindow() => Application.Current.MainWindow as MainWindow;
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -79,7 +121,7 @@ namespace WebPacketSimulator.Wpf
 
             //Moving highlighted routers if left mouse button 
             //is pressed while mouse is being moved
-            if (e.LeftButton == MouseButtonState.Pressed && isAnimationRunning == false)
+            if (e.LeftButton == MouseButtonState.Pressed && IsMessageAnimationRunning == false)
             {
                 var highlightedRouters = (from router in WpfRouter.Routers
                                           where WpfRouter.HighlightedRouters.Contains(router)
@@ -94,17 +136,16 @@ namespace WebPacketSimulator.Wpf
                                             newMousePosition.Y - previousMousePosition.Y
                                         );
                     WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
-                    Debug.WriteLine("{0} {1}", offsetAmmount.X, offsetAmmount.Y);
                 }
             }
-            else if(SelectedComponent == Components.Line && WpfRouter.LastClickedRouter != null)
+            else if (SelectedComponent == Components.Line && WpfRouter.LastClickedRouter != null)
             {
-                if(currentLine == null)
+                if (currentLine == null)
                 {
-                    currentLine = new Line() 
-                    { 
-                        Stroke = Brushes.Black, 
-                        StrokeThickness = ConnectionLineWidth 
+                    currentLine = new Line()
+                    {
+                        Stroke = Brushes.Black,
+                        StrokeThickness = ConnectionLineWidth
                     };
                     MainCanvas.Children.Add(currentLine);
                 }
@@ -114,7 +155,7 @@ namespace WebPacketSimulator.Wpf
                 currentLine.Y2 = newMousePosition.Y;
             }
 
-            previousMousePosition = new System.Windows.Point((int)newMousePosition.X, (int)newMousePosition.Y);
+            previousMousePosition = new System.Windows.Point(newMousePosition.X, newMousePosition.Y);
         }
 
         private async void MainCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -125,7 +166,7 @@ namespace WebPacketSimulator.Wpf
             WpfRouter clickedRouter = location.GetRouterOnLocation();
 
             #region Line
-            if (SelectedComponent == Components.Line && isAnimationRunning == false && clickedRouter != null)
+            if (SelectedComponent == Components.Line && IsMessageAnimationRunning == false && clickedRouter != null)
             {
                 //If this is the first part of the connection
                 if (WpfRouter.LastClickedRouter == null)
@@ -143,7 +184,7 @@ namespace WebPacketSimulator.Wpf
             #endregion
 
             #region Packet
-            else if (SelectedComponent == Components.Packet && isAnimationRunning == false)
+            else if (SelectedComponent == Components.Packet && IsMessageAnimationRunning == false)
             {
                 if (WpfRouter.LastClickedRouter == null)
                 {
@@ -158,17 +199,11 @@ namespace WebPacketSimulator.Wpf
             #endregion
 
             #region Router
+            //Unhighlighting other routers and higlighting the new router
             else if (SelectedComponent == Components.Router && clickedRouter == null)
             {
-                //Unhighlighting other routers and higlighting the new router
-                var newRouter = WpfRouter.CreateRouter(location);
                 WpfRouter.HighlightedRouters.UnhighlightAllRouters();
-                newRouter.HighlightRouter();
-
-                //Cleanup
-                WpfRouter.Routers.Add(newRouter);
-                MainCanvas.Children.Add(newRouter.RouterImage);
-                Canvas.SetZIndex(newRouter.RouterImage, 1);
+                WpfRouter.CreateRouter(location).HighlightRouter();
             }
             #endregion
         }
@@ -241,23 +276,220 @@ namespace WebPacketSimulator.Wpf
                     {
                         WpfRouter.HighlightedRouters[0].Delete();
                     }
-                    while(Connections.Count > 0)
+                    var highlightedConnections = (from connection in Connections
+                                                  where connection.ConnectionLine.Opacity != 1
+                                                  select connection).ToList();
+                    while (highlightedConnections.Count > 0)
                     {
-                        Connections[0].Delete();
+                        highlightedConnections[0].Delete();
+                        highlightedConnections.RemoveAt(0);
                     }
                 }
             }
-            else if(e.Key == Key.Escape)
+            else if (e.Key == Key.Escape)
             {
                 WpfRouter.HighlightedRouters.UnhighlightAllRouters();
                 Connection.HighlightedLines.UnhighlightAllLines();
-                if(currentLine != null)
+                if (currentLine != null)
                 {
                     MainCanvas.Children.Remove(currentLine);
                     WpfRouter.LastClickedRouter = null;
                     currentLine = null;
                 }
             }
+        }
+
+        private void ChangeMenuToComponents_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeMenu(Menus.Components);
+        }
+
+        private void ChangeMenuToPacketConsole_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeMenu(Menus.PacketConsole);
+        }
+
+        /// <summary>
+        /// This function shows data about the chosen router
+        /// </summary>
+        public void ShowRouterData()
+        {
+            AnimateRouterDataOpacity(true);
+            HighlightedRouter = WpfRouter.HighlightedRouters[0].Router;
+        }
+
+        /// <summary>
+        /// This function hides data about a router
+        /// </summary>
+        public void HideRouterData()
+        {
+            AnimateRouterDataOpacity(false);
+            var focusedElement = Keyboard.FocusedElement as TextBox;
+            if (focusedElement != null)
+            {
+                focusedElement.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            }
+        }
+
+        /// <summary>
+        /// This function animates the opacity property of the router data stack panel
+        /// </summary>
+        /// <param name="show"> If true, opacity will become 1, otherwise router data will become invisible </param>
+        public void AnimateRouterDataOpacity(bool show)
+        {
+            if (isRouterDataOpacityAnimationRunning == true)
+            {
+                return;
+            }
+            isRouterDataOpacityAnimationRunning = true;
+            RouterDataStackPanel.Opacity = 0;
+            DoubleAnimation animation = new DoubleAnimation();
+            animation.From = (show == true) ? 0 : 1;
+            animation.To = (show == true) ? 1 : 0;
+            animation.Duration = new Duration(new TimeSpan(0, 0, 0, 0, 250));
+            animation.AccelerationRatio = 1;
+            animation.Completed += delegate
+            {
+                isRouterDataOpacityAnimationRunning = false;
+                if (show == false)
+                {
+                    RouterDataVisibility = Visibility.Collapsed;
+                }
+            };
+            RouterDataStackPanel.BeginAnimation(StackPanel.OpacityProperty, animation);
+            if (show == true)
+            {
+                RouterDataVisibility = Visibility.Visible;
+            }
+        }
+
+        /// <summary>
+        /// This function changes the currently selected menu
+        /// </summary>
+        /// <param name="menu"></param>
+        void ChangeMenu(Menus menu)
+        {
+            IsComponentMenuEnabled = true;
+            IsPacketConsoleEnabled = true;
+            ComponentSelectionListView.Visibility = Visibility.Collapsed;
+            PacketConsoleStackPanel.Visibility = Visibility.Collapsed;
+            switch (menu)
+            {
+                case Menus.Components:
+                    IsComponentMenuEnabled = false;
+                    ComponentSelectionListView.Visibility = Visibility.Visible;
+                    break;
+                case Menus.PacketConsole:
+                    IsPacketConsoleEnabled = false;
+                    PacketConsoleStackPanel.Visibility = Visibility.Visible;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// This function updates the packet console
+        /// </summary>
+        /// <param name="destinationRouter"> Router to which the packet is going to </param>
+        /// <param name="sourceRouter"> Router from which the packet is going to </param>
+        /// <param name="firstAnimation"> If true, new linw will be appended before new text </param>
+        public static void UpdatePacketConsole(Router sourceRouter, Router destinationRouter, bool firstAnimation)
+        {
+            var mainWindow = GetCurrentMainWindow();
+            var textBlock = mainWindow.PacketConsoleTextBlock;
+            var scroll = mainWindow.PacketConsoleScrollViewer;
+            bool automaticScroll = Math.Abs(scroll.ActualHeight + scroll.VerticalOffset - scroll.ExtentHeight) < 1;
+
+            //Making and appending the message
+            StringBuilder textToAppend = new StringBuilder(128);
+            if (string.IsNullOrEmpty(textBlock.Text) == false)
+            {
+                textToAppend.AppendLine();
+                if (firstAnimation)
+                {
+                    textToAppend.AppendLine();
+                }
+            }
+            textToAppend.Append("Packet sent");
+            for (int i = 0; i < 2; i++)
+            {
+                textToAppend.Append((i == 0) ? " from " : " to ");
+                var currentRouter = (i == 0) ? sourceRouter : destinationRouter;
+                var emptyAddress = string.IsNullOrEmpty(currentRouter.Address);
+                var emptyName = string.IsNullOrEmpty(currentRouter.Name);
+                if (emptyAddress && emptyName)
+                {
+                    textToAppend.Append("[unknown]");
+                }
+                else if (emptyAddress && !emptyName)
+                {
+                    textToAppend.Append(currentRouter.Name);
+                }
+                else if(!emptyAddress && emptyName)
+                {
+                    textToAppend.Append(currentRouter.Address);
+                }
+                else
+                {
+                    textToAppend.Append(string.Format("{0} ({1})", currentRouter.Address, currentRouter.Name));
+                }
+            }
+            textBlock.Text += textToAppend.ToString();
+            if (automaticScroll)
+            {
+                mainWindow.PacketConsoleScrollViewer.ScrollToEnd();
+            }
+
+            //Removing lines from the console if there are too many lines
+            int count = textBlock.Text.Count(c => c == '\n');
+            while (count > 50)
+            {
+                textBlock.Text = textBlock.Text.Remove(0, textBlock.Text.IndexOf('\n') + 1);
+                count--;
+            }
+        }
+
+        private void SaveFileMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = FileHandler.FileDialogFilter;
+            dialog.ShowDialog();
+            FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, dialog.FileName);
+        }
+
+        private void OpenFileMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            //Saving current work
+            if (WpfRouter.Routers.Count > 0)
+            {
+                switch (MessageBox.Show("Do you want to save the current work?", "Save current work", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                {
+                    case MessageBoxResult.Cancel:
+                        return;
+                    case MessageBoxResult.Yes:
+                        SaveFileMenuItem_Click(null, null);
+                        break;
+                }
+            }
+
+            //Opening the new file
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = FileHandler.FileDialogFilter;
+            dialog.ShowDialog();
+            if (string.IsNullOrEmpty(dialog.FileName))
+            {
+                return;
+            }
+
+            //Deleting current data and loading data from the file
+            while(WpfRouter.Routers.Count > 0)
+            {
+                WpfRouter.Routers[0].Delete();
+            }
+            while(Connection.Connections.Count > 0)
+            {
+                Connection.Connections[0].Delete();
+            }
+            FileHandler.LoadFile(dialog.FileName);
         }
     }
 }

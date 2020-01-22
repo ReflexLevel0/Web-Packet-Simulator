@@ -17,20 +17,49 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
+
+        <!-- Menu -->
+        <Menu Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="Save" Click="SaveFileMenuItem_Click"/>
+                <MenuItem Header="Open" Click="OpenFileMenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- Main canvas -->
         <Canvas x:Name="MainCanvas" 
                 MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"
                 MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
                 MouseMove="MainCanvas_MouseMove"
-                Background="White" 
+                Background="White"
+                Grid.Row="1"
                 Grid.RowSpan="3">
         </Canvas>
-        <ListView Grid.Row="1"
+
+        <!-- Menu selection -->
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2">
+            <Button Content="Components" 
+                    IsEnabled="{Binding IsComponentMenuEnabled}"
+                    Click="ChangeMenuToComponents_Click"/>
+            <Button Content="Packet console" 
+                    IsEnabled="{Binding IsPacketConsoleEnabled}"
+                    Click="ChangeMenuToPacketConsole_Click"/>
+        </StackPanel>
+
+        <!-- Component selection -->
+        <ListView x:Name="ComponentSelectionListView"
+                  Grid.Row="3"
                   Grid.ColumnSpan="2"
                   SelectedIndex="0"
                   SelectionChanged="ListView_SelectionChanged">
@@ -49,5 +78,28 @@
             <local:Component ImageSource="/Images/Packet.png"
                              Text="{x:Static local:Component.PacketComponentText}"/>
         </ListView>
+        
+        <!-- Packet console -->
+        <StackPanel x:Name="PacketConsoleStackPanel"
+                    Grid.Row="3"
+                    Grid.ColumnSpan="2">
+            <ScrollViewer MaxHeight="100" x:Name="PacketConsoleScrollViewer">
+                <TextBlock x:Name="PacketConsoleTextBlock" 
+                           ScrollViewer.CanContentScroll="True" 
+                           ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            </ScrollViewer>
+        </StackPanel>
+
+        <!-- Router data -->
+        <StackPanel x:Name="RouterDataStackPanel"
+                    Orientation="Vertical" 
+                    Grid.Row="1"
+                    Grid.Column="1" 
+                    Visibility="{Binding RouterDataVisibility}">
+            <TextBlock Text="Name:"/>
+            <TextBox Text="{Binding HighlightedRouter.Name, Mode=TwoWay}"/>
+            <TextBlock Text="IP address:"/>
+            <TextBox Text="{Binding HighlightedRouter.Address, Mode=TwoWay}"/>
+        </StackPanel>
     </Grid>
 </Window>

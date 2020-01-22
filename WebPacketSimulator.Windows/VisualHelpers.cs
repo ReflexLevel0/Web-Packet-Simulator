@@ -91,32 +91,83 @@ namespace WebPacketSimulator.Wpf
             messageImage.Margin = source.RouterImage.Margin;
             MainWindow.Canvas.Children.Add(messageImage);
             Canvas.SetZIndex(messageImage, 1);
+            var lastRouter = source;
 
             //Animating the message
             foreach (var router in path)
             {
-                var wpfRouter = WpfRouter.GetRouter(router, true);
-                var currentMargin = wpfRouter.RouterImage.Margin;
-                Thickness fromThickness = new Thickness(messageImage.Margin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
-                                         messageImage.Margin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
-                                         0, 0);
-                Thickness toThickness = new Thickness(currentMargin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
-                                         currentMargin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
-                                         0, 0);
-                double xDifference = Math.Abs(toThickness.Left - fromThickness.Left);
-                double yDifference = Math.Abs(toThickness.Top - fromThickness.Top);
-                double pathLength = Math.Sqrt(xDifference * xDifference + yDifference * yDifference);
-                var animation = new ThicknessAnimation()
-                {
-                    From = fromThickness,
-                    To = toThickness,
-                    Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250)),
-                    FillBehavior = FillBehavior.Stop
-                };
-                await mainWindow.Animate(animation);
-                messageImage.Margin = wpfRouter.RouterImage.Margin;
+                var destinationRouter = WpfRouter.GetRouter(router, true);
+                await AnimatePacket(lastRouter, destinationRouter, destinationRouter.Router == path[0]);
+                lastRouter = destinationRouter;
             }
             MainWindow.Canvas.Children.Remove(messageImage);
+        }
+
+        /// <summary>
+        /// This function updates the visibility of the router data (the data which is used to modify router data)
+        /// </summary>
+        static void UpdateRouterDataVisibility()
+        {
+            var mainWindow = (Application.Current.MainWindow as MainWindow);
+            if (WpfRouter.HighlightedRouters.Count == 1)
+            {
+                mainWindow.ShowRouterData();
+            }
+            else
+            {
+                mainWindow.HideRouterData();
+            }
+        }
+
+        /// <summary>
+        /// This function is used to simulate sending a packet from a location to the router (THE ROUTER MUST BE NEIGHBORS!!!)
+        /// </summary>
+        /// <param name="destinationRouter"> Router to which the packet will be sent to </param>
+        /// <param name="sourceRouter"> Router from which the packet is being sent </param>
+        /// <returns></returns>
+        public static Task AnimatePacket(WpfRouter sourceRouter, WpfRouter destinationRouter, bool isFirstAnimation)
+        {
+            if(sourceRouter.Router.LinkedRouters.Contains(destinationRouter.Router) == false)
+            {
+                throw new Exception("Unknown error has occured!");
+            }
+
+            TaskCompletionSource<bool> taskCompleted = new TaskCompletionSource<bool>();
+
+            //Calculations necessary for the animation
+            var fromMargin = sourceRouter.RouterImage.Margin;
+            var toMargin = destinationRouter.RouterImage.Margin;
+            Thickness fromThickness = new Thickness(fromMargin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
+                                     fromMargin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
+                                     0, 0);
+            Thickness toThickness = new Thickness(toMargin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
+                                     toMargin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
+                                     0, 0);
+            double xDifference = Math.Abs(toThickness.Left - fromThickness.Left);
+            double yDifference = Math.Abs(toThickness.Top - fromThickness.Top);
+            double pathLength = Math.Sqrt(xDifference * xDifference + yDifference * yDifference);
+
+            //Animation setup and start
+            var animation = new ThicknessAnimation()
+            {
+                From = fromThickness,
+                To = toThickness,
+                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250)),
+                FillBehavior = FillBehavior.Stop
+            };
+            EventHandler OnCompleted = null;
+            OnCompleted = delegate
+            {
+                taskCompleted.SetResult(true);
+                animation.Completed -= OnCompleted;
+                MainWindow.IsMessageAnimationRunning = false;
+                MainWindow.PacketImage.Margin = toThickness;
+                MainWindow.UpdatePacketConsole(sourceRouter.Router, destinationRouter.Router, isFirstAnimation);
+            };
+            animation.Completed += OnCompleted;
+            MainWindow.IsMessageAnimationRunning = true;
+            MainWindow.PacketImage.BeginAnimation(Image.MarginProperty, animation);
+            return taskCompleted.Task;
         }
 
         #region Highlight/unhighlight functions
@@ -129,6 +180,7 @@ namespace WebPacketSimulator.Wpf
             router.IsHighlighted = true;
             router.RouterImage.Source = new BitmapImage(new Uri("/Images/HighlightedRouter.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Add(router);
+            UpdateRouterDataVisibility();
         }
 
         /// <summary>
@@ -152,6 +204,7 @@ namespace WebPacketSimulator.Wpf
             router.IsHighlighted = false;
             router.RouterImage.Source = new BitmapImage(new Uri("/Images/Router.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Remove(router);
+            UpdateRouterDataVisibility();
         }
 
         /// <summary>
