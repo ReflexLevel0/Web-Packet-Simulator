@@ -26,8 +26,8 @@ namespace WebPacketSimulator.Wpf
             foreach (var router in routers)
             {
                 text.AppendLine(string.Format("{0} {1} {2} {3}",
-                                          router.RouterImage.Margin.Left,
-                                          router.RouterImage.Margin.Top,
+                                          router.RouterCanvas.Margin.Left,
+                                          router.RouterCanvas.Margin.Top,
                                           router.Router.Address,
                                           router.Router.Name));
             }

@@ -114,8 +114,7 @@ namespace WebPacketSimulator.Wpf
             ChangeMenu(Menus.Components);
         }
 
-        public static MainWindow GetCurrentMainWindow() => Application.Current.MainWindow as MainWindow;
-
+        #region Mouse
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             var newMousePosition = e.GetPosition(MainCanvas);
@@ -150,13 +149,23 @@ namespace WebPacketSimulator.Wpf
                     };
                     MainCanvas.Children.Add(currentLine);
                 }
-                currentLine.X1 = WpfRouter.LastClickedRouter.RouterImage.Margin.Left + WpfRouter.RouterImageWidth / 2;
-                currentLine.Y1 = WpfRouter.LastClickedRouter.RouterImage.Margin.Top + WpfRouter.RouterImageHeight / 2;
+                currentLine.X1 = WpfRouter.LastClickedRouter.RouterCanvas.Margin.Left + WpfRouter.RouterImageWidth / 2;
+                currentLine.Y1 = WpfRouter.LastClickedRouter.RouterCanvas.Margin.Top + WpfRouter.RouterImageHeight / 2;
                 currentLine.X2 = newMousePosition.X;
                 currentLine.Y2 = newMousePosition.Y;
             }
 
             previousMousePosition = new System.Windows.Point(newMousePosition.X, newMousePosition.Y);
+        }
+
+        private void ChangeMenuToComponents_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeMenu(Menus.Components);
+        }
+
+        private void ChangeMenuToPacketConsole_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeMenu(Menus.PacketConsole);
         }
 
         private async void MainCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -241,8 +250,177 @@ namespace WebPacketSimulator.Wpf
                 }
             }
         }
+        #endregion
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        #region Router data stack panel
+        /// <summary>
+        /// This function shows data about the chosen router
+        /// </summary>
+        public void ShowRouterData()
+        {
+            AnimateRouterDataOpacity(true);
+            HighlightedRouter = WpfRouter.HighlightedRouters[0].Router;
+        }
+
+        /// <summary>
+        /// This function hides data about a router
+        /// </summary>
+        public void HideRouterData()
+        {
+            AnimateRouterDataOpacity(false);
+            var focusedElement = Keyboard.FocusedElement as TextBox;
+            if (focusedElement != null)
+            {
+                focusedElement.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            }
+        }
+        #endregion
+
+        #region Packet console
+        /// <summary>
+        /// This function updates the packet console
+        /// </summary>
+        /// <param name="destinationRouter"> Router to which the packet is going to </param>
+        /// <param name="sourceRouter"> Router from which the packet is going to </param>
+        /// <param name="firstAnimation"> If true, new linw will be appended before new text </param>
+        public static void UpdatePacketConsole(Router sourceRouter, Router destinationRouter, bool firstAnimation)
+        {
+            var mainWindow = GetCurrentMainWindow();
+            var textBlock = mainWindow.PacketConsoleTextBlock;
+            var scroll = mainWindow.PacketConsoleScrollViewer;
+            bool automaticScroll = Math.Abs(scroll.ActualHeight + scroll.VerticalOffset - scroll.ExtentHeight) < 1;
+
+            //Making and appending the message
+            StringBuilder textToAppend = new StringBuilder(128);
+            if (string.IsNullOrEmpty(textBlock.Text) == false)
+            {
+                textToAppend.AppendLine();
+                if (firstAnimation)
+                {
+                    textToAppend.AppendLine();
+                }
+            }
+            textToAppend.Append("Packet sent");
+            for (int i = 0; i < 2; i++)
+            {
+                textToAppend.Append((i == 0) ? " from " : " to ");
+                var currentRouter = (i == 0) ? sourceRouter : destinationRouter;
+                var emptyAddress = string.IsNullOrEmpty(currentRouter.Address);
+                var emptyName = string.IsNullOrEmpty(currentRouter.Name);
+                if (emptyAddress && emptyName)
+                {
+                    textToAppend.Append("[unknown]");
+                }
+                else if (emptyAddress && !emptyName)
+                {
+                    textToAppend.Append(currentRouter.Name);
+                }
+                else if (!emptyAddress && emptyName)
+                {
+                    textToAppend.Append(currentRouter.Address);
+                }
+                else
+                {
+                    textToAppend.Append(string.Format("{0} ({1})", currentRouter.Address, currentRouter.Name));
+                }
+            }
+            textBlock.Text += textToAppend.ToString();
+            if (automaticScroll)
+            {
+                mainWindow.PacketConsoleScrollViewer.ScrollToEnd();
+            }
+
+            //Removing lines from the console if there are too many lines
+            int count = textBlock.Text.Count(c => c == '\n');
+            while (count > 50)
+            {
+                textBlock.Text = textBlock.Text.Remove(0, textBlock.Text.IndexOf('\n') + 1);
+                count--;
+            }
+        }
+
+        /// <summary>
+        /// This function send a message animation termination message to the console
+        /// </summary>
+        public static void UpdatePacketConsole()
+        {
+            var mainWindow = GetCurrentMainWindow();
+            mainWindow.PacketConsoleTextBlock.Text += "\nMessage animation canceled!\n";
+        }
+        #endregion
+
+        #region Command binding
+        private void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //Saving current work
+            if (WpfRouter.Routers.Count > 0)
+            {
+                switch (VisualHelpers.SaveCurrentWorkQuery())
+                {
+                    case MessageBoxResult.Cancel:
+                        return;
+                    case MessageBoxResult.Yes:
+                        SaveFileCommandBinding_Executed(null, null);
+                        break;
+                }
+            }
+
+            //Opening the new file
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = FileHandler.FileDialogFilter;
+            dialog.ShowDialog();
+            if (string.IsNullOrEmpty(dialog.FileName))
+            {
+                return;
+            }
+
+            //Deleting current data and loading data from the file
+            while (WpfRouter.Routers.Count > 0)
+            {
+                WpfRouter.Routers[0].Delete();
+            }
+            while (Connection.Connections.Count > 0)
+            {
+                Connection.Connections[0].Delete();
+            }
+            FileHandler.LoadFile(dialog.FileName);
+            currentFilePath = dialog.FileName;
+        }
+
+        private void SaveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (currentFilePath == null)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = FileHandler.FileDialogFilter;
+                dialog.ShowDialog();
+                currentFilePath = dialog.FileName;
+            }
+            FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, currentFilePath);
+        }
+        #endregion
+
+        #region TextBox
+        private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var router = (from _router in WpfRouter.Routers
+                          where _router.Router == HighlightedRouter
+                          select _router).First();
+            router.RouterNameTextBlock.Text = (sender as TextBox).Text;
+        }
+
+        private void AddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var router = (from _router in WpfRouter.Routers
+                          where _router.Router == HighlightedRouter
+                          select _router).First();
+            router.RouterAddressTextBlock.Text = (sender as TextBox).Text;
+        }
+        #endregion
+
+        public static MainWindow GetCurrentMainWindow() => Application.Current.MainWindow as MainWindow;
+
+        private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             WpfRouter.HighlightedRouters.UnhighlightAllRouters();
             WpfRouter.LastClickedRouter = null;
@@ -300,38 +478,6 @@ namespace WebPacketSimulator.Wpf
             }
         }
 
-        private void ChangeMenuToComponents_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeMenu(Menus.Components);
-        }
-
-        private void ChangeMenuToPacketConsole_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeMenu(Menus.PacketConsole);
-        }
-
-        /// <summary>
-        /// This function shows data about the chosen router
-        /// </summary>
-        public void ShowRouterData()
-        {
-            AnimateRouterDataOpacity(true);
-            HighlightedRouter = WpfRouter.HighlightedRouters[0].Router;
-        }
-
-        /// <summary>
-        /// This function hides data about a router
-        /// </summary>
-        public void HideRouterData()
-        {
-            AnimateRouterDataOpacity(false);
-            var focusedElement = Keyboard.FocusedElement as TextBox;
-            if (focusedElement != null)
-            {
-                focusedElement.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            }
-        }
-
         /// <summary>
         /// This function animates the opacity property of the router data stack panel
         /// </summary>
@@ -376,126 +522,6 @@ namespace WebPacketSimulator.Wpf
                     PacketConsoleStackPanel.Visibility = Visibility.Visible;
                     break;
             }
-        }
-
-        /// <summary>
-        /// This function updates the packet console
-        /// </summary>
-        /// <param name="destinationRouter"> Router to which the packet is going to </param>
-        /// <param name="sourceRouter"> Router from which the packet is going to </param>
-        /// <param name="firstAnimation"> If true, new linw will be appended before new text </param>
-        public static void UpdatePacketConsole(Router sourceRouter, Router destinationRouter, bool firstAnimation)
-        {
-            var mainWindow = GetCurrentMainWindow();
-            var textBlock = mainWindow.PacketConsoleTextBlock;
-            var scroll = mainWindow.PacketConsoleScrollViewer;
-            bool automaticScroll = Math.Abs(scroll.ActualHeight + scroll.VerticalOffset - scroll.ExtentHeight) < 1;
-
-            //Making and appending the message
-            StringBuilder textToAppend = new StringBuilder(128);
-            if (string.IsNullOrEmpty(textBlock.Text) == false)
-            {
-                textToAppend.AppendLine();
-                if (firstAnimation)
-                {
-                    textToAppend.AppendLine();
-                }
-            }
-            textToAppend.Append("Packet sent");
-            for (int i = 0; i < 2; i++)
-            {
-                textToAppend.Append((i == 0) ? " from " : " to ");
-                var currentRouter = (i == 0) ? sourceRouter : destinationRouter;
-                var emptyAddress = string.IsNullOrEmpty(currentRouter.Address);
-                var emptyName = string.IsNullOrEmpty(currentRouter.Name);
-                if (emptyAddress && emptyName)
-                {
-                    textToAppend.Append("[unknown]");
-                }
-                else if (emptyAddress && !emptyName)
-                {
-                    textToAppend.Append(currentRouter.Name);
-                }
-                else if(!emptyAddress && emptyName)
-                {
-                    textToAppend.Append(currentRouter.Address);
-                }
-                else
-                {
-                    textToAppend.Append(string.Format("{0} ({1})", currentRouter.Address, currentRouter.Name));
-                }
-            }
-            textBlock.Text += textToAppend.ToString();
-            if (automaticScroll)
-            {
-                mainWindow.PacketConsoleScrollViewer.ScrollToEnd();
-            }
-
-            //Removing lines from the console if there are too many lines
-            int count = textBlock.Text.Count(c => c == '\n');
-            while (count > 50)
-            {
-                textBlock.Text = textBlock.Text.Remove(0, textBlock.Text.IndexOf('\n') + 1);
-                count--;
-            }
-        }
-
-        /// <summary>
-        /// This function send a message animation termination message to the console
-        /// </summary>
-        public static void UpdatePacketConsole()
-        {
-            var mainWindow = GetCurrentMainWindow();
-            mainWindow.PacketConsoleTextBlock.Text += "\nMessage animation canceled!\n";
-        }
-
-        private void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Saving current work
-            if (WpfRouter.Routers.Count > 0)
-            {
-                switch (VisualHelpers.SaveCurrentWorkQuery())
-                {
-                    case MessageBoxResult.Cancel:
-                        return;
-                    case MessageBoxResult.Yes:
-                        SaveFileCommandBinding_Executed(null, null);
-                        break;
-                }
-            }
-
-            //Opening the new file
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = FileHandler.FileDialogFilter;
-            dialog.ShowDialog();
-            if (string.IsNullOrEmpty(dialog.FileName))
-            {
-                return;
-            }
-
-            //Deleting current data and loading data from the file
-            while (WpfRouter.Routers.Count > 0)
-            {
-                WpfRouter.Routers[0].Delete();
-            }
-            while (Connection.Connections.Count > 0)
-            {
-                Connection.Connections[0].Delete();
-            }
-            FileHandler.LoadFile(dialog.FileName);
-            currentFilePath = dialog.FileName;
-        }
-
-        private void SaveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (currentFilePath == null)
-            {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.Filter = FileHandler.FileDialogFilter;
-                dialog.ShowDialog();
-                currentFilePath = dialog.FileName;
-            }
-            FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, currentFilePath);
         }
 
         protected override void OnClosing(CancelEventArgs e)

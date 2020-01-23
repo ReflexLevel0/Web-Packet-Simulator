@@ -24,7 +24,11 @@ namespace WebPacketSimulator.Wpf
 {
     public class WpfRouter : DependencyObject
     {
+        public Canvas RouterCanvas = new Canvas();
         public System.Windows.Controls.Image RouterImage;
+        public TextBlock RouterNameTextBlock = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Center };
+        public TextBlock RouterAddressTextBlock = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Center };
+        public StackPanel RouterStackPanel = new StackPanel();
         public Router Router { get; set; }
         public static double RouterImageWidth { get; } = 50;
         public static double RouterImageHeight { get; } = 50;
@@ -59,7 +63,7 @@ namespace WebPacketSimulator.Wpf
             };
             for (int i = 0; i < 2; i++)
             {
-                var source = (i == 0) ? routerA.RouterImage : routerB.RouterImage;
+                var source = (i == 0) ? routerA.RouterCanvas : routerB.RouterCanvas;
                 var binding = new Binding("Margin") { Source = source, Converter = new LineMarginToRouterCenter(), ConverterParameter = true };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
                 binding = new Binding("Margin") { Source = source, Converter = new LineMarginToRouterCenter(), ConverterParameter = false };
@@ -115,9 +119,9 @@ namespace WebPacketSimulator.Wpf
             for (int i = 0; i < routers.Count; i++)
             {
                 var router = routers[i];
-                double leftMargin = router.RouterImage.Margin.Left + moveAmmount.X;
-                double topMargin = router.RouterImage.Margin.Top + moveAmmount.Y;
-                router.RouterImage.Margin = new Thickness(leftMargin, topMargin, 0, 0);
+                double leftMargin = router.RouterCanvas.Margin.Left + moveAmmount.X;
+                double topMargin = router.RouterCanvas.Margin.Top + moveAmmount.Y;
+                router.RouterCanvas.Margin = new Thickness(leftMargin, topMargin, 0, 0);
             }
         }
 
@@ -138,15 +142,20 @@ namespace WebPacketSimulator.Wpf
                 Router = new Router() { Address = address, Name = name },
                 RouterImage = new System.Windows.Controls.Image()
                 {
-                    Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0),
                     Width = RouterImageWidth,
-                    Height = RouterImageHeight
+                    Height = RouterImageHeight,
+                    HorizontalAlignment = HorizontalAlignment.Center
                 }
             };
+            newRouter.RouterCanvas.Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0);
+            newRouter.RouterCanvas.Children.Add(newRouter.RouterStackPanel);
+            newRouter.RouterStackPanel.Children.Add(newRouter.RouterImage);
+            newRouter.RouterStackPanel.Children.Add(newRouter.RouterNameTextBlock);
+            newRouter.RouterStackPanel.Children.Add(newRouter.RouterAddressTextBlock);
             WpfRouter.Routers.Add(newRouter);
             newRouter.UnhighlightRouter();
-            MainWindow.GetCurrentMainWindow().MainCanvas.Children.Add(newRouter.RouterImage);
-            Canvas.SetZIndex(newRouter.RouterImage, 1);
+            MainWindow.GetCurrentMainWindow().MainCanvas.Children.Add(newRouter.RouterCanvas);
+            Canvas.SetZIndex(newRouter.RouterCanvas, 1);
             return newRouter;
         }
 
@@ -199,7 +208,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void Delete()
         {
-            MainWindow.Canvas.Children.Remove(RouterImage);
+            MainWindow.Canvas.Children.Remove(RouterCanvas);
             this.UnhighlightRouter();
             Routers.Remove(this);
             var connections = (from connection in Connections

@@ -81,7 +81,7 @@
                   Grid.Row="3"
                   Grid.ColumnSpan="2"
                   SelectedIndex="0"
-                  SelectionChanged="ListView_SelectionChanged">
+                  SelectionChanged="MenuListView_SelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -116,9 +116,9 @@
                     Grid.Column="1" 
                     Visibility="{Binding RouterDataVisibility}">
             <TextBlock Text="Name:"/>
-            <TextBox Text="{Binding HighlightedRouter.Name, Mode=TwoWay}"/>
+            <TextBox Text="{Binding HighlightedRouter.Name, Mode=TwoWay}" TextChanged="NameTextBox_TextChanged"/>
             <TextBlock Text="IP address:"/>
-            <TextBox Text="{Binding HighlightedRouter.Address, Mode=TwoWay}"/>
+            <TextBox Text="{Binding HighlightedRouter.Address, Mode=TwoWay}" TextChanged="AddressTextBox_TextChanged"/>
         </StackPanel>
     </Grid>
 </Window>

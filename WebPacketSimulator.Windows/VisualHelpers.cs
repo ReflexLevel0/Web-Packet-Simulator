@@ -21,11 +21,11 @@ namespace WebPacketSimulator.Wpf
         /// <param name="clickLocation"> Click location (relative to image's parent (canvas)) </param>
         /// <param name="image"> Image which is being tested </param>
         /// <returns></returns>
-        public static bool IsOnImage(this Point clickLocation, Image image) =>
-            image.Margin.Left <= clickLocation.X &&
-            image.Margin.Left + image.ActualWidth >= clickLocation.X &&
-            image.Margin.Top <= clickLocation.Y &&
-            image.Margin.Top + image.ActualHeight >= clickLocation.Y;
+        public static bool IsOnImage(this Point clickLocation, Thickness routerMargin) =>
+            routerMargin.Left <= clickLocation.X &&
+            routerMargin.Left + WpfRouter.RouterImageWidth >= clickLocation.X &&
+            routerMargin.Top <= clickLocation.Y &&
+            routerMargin.Top + WpfRouter.RouterImageHeight >= clickLocation.Y;
 
         /// <summary>
         /// This function checks if any of the routers have been clicked
@@ -35,7 +35,7 @@ namespace WebPacketSimulator.Wpf
         /// <returns></returns>
         public static bool IsOnAnyImage(this Point clickLocation, List<WpfRouter> routers)
         {
-            foreach (var image in routers.Select(router => router.RouterImage))
+            foreach (var image in routers.Select(router => router.RouterCanvas.Margin))
             {
                 if (clickLocation.IsOnImage(image))
                 {
@@ -68,7 +68,7 @@ namespace WebPacketSimulator.Wpf
         {
             foreach (var router in WpfRouter.Routers)
             {
-                if (location.IsOnImage(router.RouterImage))
+                if (location.IsOnImage(router.RouterCanvas.Margin))
                 {
                     return router;
                 }
@@ -88,7 +88,7 @@ namespace WebPacketSimulator.Wpf
                                                      destination.Router);
             path.RemoveAt(0);
             var messageImage = MainWindow.PacketImage;
-            messageImage.Margin = source.RouterImage.Margin;
+            messageImage.Margin = source.RouterCanvas.Margin;
             MainWindow.Canvas.Children.Add(messageImage);
             Canvas.SetZIndex(messageImage, 1);
             var lastRouter = source;
@@ -140,8 +140,8 @@ namespace WebPacketSimulator.Wpf
             TaskCompletionSource<bool> taskCompleted = new TaskCompletionSource<bool>();
 
             //Calculations necessary for the animation
-            var fromMargin = sourceRouter.RouterImage.Margin;
-            var toMargin = destinationRouter.RouterImage.Margin;
+            var fromMargin = sourceRouter.RouterCanvas.Margin;
+            var toMargin = destinationRouter.RouterCanvas.Margin;
             Thickness fromThickness = new Thickness(fromMargin.Left + WpfRouter.RouterImageWidth / 2 - MainWindow.PacketImage.Width / 2,
                                      fromMargin.Top + WpfRouter.RouterImageHeight / 2 - MainWindow.PacketImage.Height / 2,
                                      0, 0);
