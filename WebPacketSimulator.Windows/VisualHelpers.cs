@@ -127,6 +127,11 @@ namespace WebPacketSimulator.Wpf
         /// <returns></returns>
         public static Task AnimatePacket(WpfRouter sourceRouter, WpfRouter destinationRouter, bool isFirstAnimation)
         {
+            if(MainWindow.IsMessageAnimationRunning == true)
+            {
+                MainWindow.UpdatePacketConsole();
+            }
+
             if(sourceRouter.Router.LinkedRouters.Contains(destinationRouter.Router) == false)
             {
                 throw new Exception("Unknown error has occured!");
@@ -166,9 +171,16 @@ namespace WebPacketSimulator.Wpf
             };
             animation.Completed += OnCompleted;
             MainWindow.IsMessageAnimationRunning = true;
-            MainWindow.PacketImage.BeginAnimation(Image.MarginProperty, animation);
+            MainWindow.PacketImage.BeginAnimation(Image.MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);
             return taskCompleted.Task;
         }
+
+        /// <summary>
+        /// This function presents a dialog which is used for saving current work
+        /// </summary>
+        /// <returns></returns>
+        public static MessageBoxResult SaveCurrentWorkQuery() =>
+            MessageBox.Show("Do you want to save the current work?", "Save current work", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
         #region Highlight/unhighlight functions
         /// <summary>

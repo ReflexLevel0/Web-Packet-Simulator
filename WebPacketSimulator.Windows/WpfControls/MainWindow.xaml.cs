@@ -33,7 +33,6 @@ namespace WebPacketSimulator.Wpf
         enum Components { Select, Router, Line, Packet }
         Components SelectedComponent = Components.Select;
         public static bool IsMessageAnimationRunning;
-        bool isRouterDataOpacityAnimationRunning;
         Line currentLine = null;
 
         Visibility routerDataVisibility = Visibility.Collapsed;
@@ -186,7 +185,7 @@ namespace WebPacketSimulator.Wpf
             #endregion
 
             #region Packet
-            else if (SelectedComponent == Components.Packet && IsMessageAnimationRunning == false)
+            else if (SelectedComponent == Components.Packet)
             {
                 if (WpfRouter.LastClickedRouter == null)
                 {
@@ -339,11 +338,6 @@ namespace WebPacketSimulator.Wpf
         /// <param name="show"> If true, opacity will become 1, otherwise router data will become invisible </param>
         public void AnimateRouterDataOpacity(bool show)
         {
-            if (isRouterDataOpacityAnimationRunning == true)
-            {
-                return;
-            }
-            isRouterDataOpacityAnimationRunning = true;
             RouterDataStackPanel.Opacity = 0;
             DoubleAnimation animation = new DoubleAnimation();
             animation.From = (show == true) ? 0 : 1;
@@ -352,17 +346,13 @@ namespace WebPacketSimulator.Wpf
             animation.AccelerationRatio = 1;
             animation.Completed += delegate
             {
-                isRouterDataOpacityAnimationRunning = false;
-                if (show == false)
-                {
-                    RouterDataVisibility = Visibility.Collapsed;
-                }
+                RouterDataVisibility = (show == true) ? Visibility.Visible : Visibility.Collapsed;
             };
-            RouterDataStackPanel.BeginAnimation(StackPanel.OpacityProperty, animation);
             if (show == true)
             {
                 RouterDataVisibility = Visibility.Visible;
             }
+            RouterDataStackPanel.BeginAnimation(StackPanel.OpacityProperty, animation, HandoffBehavior.SnapshotAndReplace);
         }
 
         /// <summary>
@@ -450,12 +440,21 @@ namespace WebPacketSimulator.Wpf
             }
         }
 
+        /// <summary>
+        /// This function send a message animation termination message to the console
+        /// </summary>
+        public static void UpdatePacketConsole()
+        {
+            var mainWindow = GetCurrentMainWindow();
+            mainWindow.PacketConsoleTextBlock.Text += "\nMessage animation canceled!\n";
+        }
+
         private void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //Saving current work
             if (WpfRouter.Routers.Count > 0)
             {
-                switch (MessageBox.Show("Do you want to save the current work?", "Save current work", MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
+                switch (VisualHelpers.SaveCurrentWorkQuery())
                 {
                     case MessageBoxResult.Cancel:
                         return;
@@ -484,6 +483,7 @@ namespace WebPacketSimulator.Wpf
                 Connection.Connections[0].Delete();
             }
             FileHandler.LoadFile(dialog.FileName);
+            currentFilePath = dialog.FileName;
         }
 
         private void SaveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -496,6 +496,22 @@ namespace WebPacketSimulator.Wpf
                 currentFilePath = dialog.FileName;
             }
             FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, currentFilePath);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (WpfRouter.Routers.Count > 0)
+            {
+                switch (VisualHelpers.SaveCurrentWorkQuery())
+                {
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        return;
+                    case MessageBoxResult.Yes:
+                        SaveFileCommandBinding_Executed(null,null);
+                        break;
+                }
+            }
         }
     }
 }
