@@ -15,6 +15,13 @@
         </Style>
     </Window.Resources>
 
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" 
+                        Executed="OpenFileCommandBinding_Executed"/>
+        <CommandBinding Command="Save" 
+                        Executed="SaveFileCommandBinding_Executed"/>
+    </Window.CommandBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -29,9 +36,21 @@
 
         <!-- Menu -->
         <Menu Grid.ColumnSpan="2">
-            <MenuItem Header="File">
-                <MenuItem Header="Save" Click="SaveFileMenuItem_Click"/>
-                <MenuItem Header="Open" Click="OpenFileMenuItem_Click"/>
+            <MenuItem Header="_File">
+                <MenuItem Header="_Save" 
+                          Command="Save" 
+                          InputGestureText="Ctrl+S">
+                    <MenuItem.Icon>
+                        <Image Source="/Images/Save.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Open" 
+                          Command="Open" 
+                          InputGestureText="Ctrl+O">
+                    <MenuItem.Icon>
+                        <Image Source="/Images/Open.png"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </Menu>
         

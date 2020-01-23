@@ -93,6 +93,8 @@ namespace WebPacketSimulator.Wpf
         }
 
         public enum Menus { Components, PacketConsole }
+
+        string currentFilePath = null;
         #endregion
 
         #region Static variables
@@ -448,15 +450,7 @@ namespace WebPacketSimulator.Wpf
             }
         }
 
-        private void SaveFileMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = FileHandler.FileDialogFilter;
-            dialog.ShowDialog();
-            FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, dialog.FileName);
-        }
-
-        private void OpenFileMenuItem_Click(object sender, RoutedEventArgs e)
+        private void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //Saving current work
             if (WpfRouter.Routers.Count > 0)
@@ -466,7 +460,7 @@ namespace WebPacketSimulator.Wpf
                     case MessageBoxResult.Cancel:
                         return;
                     case MessageBoxResult.Yes:
-                        SaveFileMenuItem_Click(null, null);
+                        SaveFileCommandBinding_Executed(null, null);
                         break;
                 }
             }
@@ -481,15 +475,27 @@ namespace WebPacketSimulator.Wpf
             }
 
             //Deleting current data and loading data from the file
-            while(WpfRouter.Routers.Count > 0)
+            while (WpfRouter.Routers.Count > 0)
             {
                 WpfRouter.Routers[0].Delete();
             }
-            while(Connection.Connections.Count > 0)
+            while (Connection.Connections.Count > 0)
             {
                 Connection.Connections[0].Delete();
             }
             FileHandler.LoadFile(dialog.FileName);
+        }
+
+        private void SaveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (currentFilePath == null)
+            {
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = FileHandler.FileDialogFilter;
+                dialog.ShowDialog();
+                currentFilePath = dialog.FileName;
+            }
+            FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, currentFilePath);
         }
     }
 }
