@@ -25,6 +25,7 @@ namespace WebPacketSimulator.Wpf
         Point previousMousePosition = new Point();
         public static bool IsMessageAnimationRunning;
         public static Line CurrentLine = null;
+        private Point lastMouseDownLocation;
 
         public MainCanvasUserControl()
         {
@@ -35,9 +36,8 @@ namespace WebPacketSimulator.Wpf
         private async void MainCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             var location = e.GetPosition(MainCanvas);
-
-            //Highlighting the router on the click position
             WpfRouter clickedRouter = location.GetRouterOnLocation();
+            bool isCtrlPressed = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 
             #region Line
             if (MainWindow.SelectedComponent == MainWindow.Components.Line && IsMessageAnimationRunning == false && clickedRouter != null)
@@ -73,6 +73,17 @@ namespace WebPacketSimulator.Wpf
             #endregion
 
             #region Router
+            //Unhighlighting all routers except the clicked one (if routers weren't moved)
+            else if (MainWindow.SelectedComponent == MainWindow.Components.Router && clickedRouter != null)
+            {
+                if (Math.Abs(location.X - lastMouseDownLocation.X) < 1 &&
+                    Math.Abs(location.Y - lastMouseDownLocation.Y) < 1 &&
+                    isCtrlPressed == false)
+                {
+                    WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+                    clickedRouter.HighlightRouter();
+                }
+            }
             //Unhighlighting other routers and higlighting the new router
             else if (MainWindow.SelectedComponent == MainWindow.Components.Router && clickedRouter == null)
             {
@@ -88,12 +99,12 @@ namespace WebPacketSimulator.Wpf
             var clickedRouter = clickPosition.GetRouterOnLocation();
             if (clickedRouter != null && MainWindow.SelectedComponent == MainWindow.Components.Router)
             {
-                bool isCtrlClicked =
+                bool isCtrlPressed =
                     Keyboard.IsKeyDown(Key.LeftCtrl) == true ||
                     Keyboard.IsKeyDown(Key.RightCtrl) == true;
 
                 //Highlighting/unhighlighting the clicked router if ctrl is pressed
-                if (isCtrlClicked == true)
+                if (isCtrlPressed == true)
                 {
                     if (clickedRouter.IsHighlighted == false)
                     {
@@ -109,10 +120,12 @@ namespace WebPacketSimulator.Wpf
                 {
                     if (clickedRouter.IsHighlighted == false)
                     {
+                        WpfRouter.HighlightedRouters.UnhighlightAllRouters();
                         clickedRouter.HighlightRouter();
                     }
                 }
             }
+            lastMouseDownLocation = clickPosition;
         }
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
