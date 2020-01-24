@@ -22,7 +22,7 @@ namespace WebPacketSimulator.Wpf
     {
         public static MainCanvasUserControl MainCanvasUC { get; set; }
 
-        System.Windows.Point previousMousePosition = new System.Windows.Point();
+        Point previousMousePosition = new Point();
         public static bool IsMessageAnimationRunning;
         public static Line CurrentLine = null;
 

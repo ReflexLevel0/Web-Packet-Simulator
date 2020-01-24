@@ -37,62 +37,9 @@
         <local:MenuUserControl/>
         <local:AnimationSpeedUserControl Grid.Column="1"/>
         <local:MainCanvasUserControl Grid.Row="1" Grid.RowSpan="3"/>
-
-        <!-- Menu selection -->
-        <StackPanel Orientation="Horizontal"
-                    Grid.Row="2"
-                    Grid.ColumnSpan="2">
-            <Button Content="Components" 
-                    IsEnabled="{Binding IsComponentMenuEnabled}"
-                    Click="ChangeMenuToComponents_Click"/>
-            <Button Content="Packet console" 
-                    IsEnabled="{Binding IsPacketConsoleEnabled}"
-                    Click="ChangeMenuToPacketConsole_Click"/>
-        </StackPanel>
-
-        <!-- Component selection -->
-        <ListView x:Name="ComponentSelectionListView"
-                  Grid.Row="3"
-                  Grid.ColumnSpan="2"
-                  SelectedIndex="0"
-                  SelectionChanged="MenuListView_SelectionChanged">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal">
-                    </StackPanel>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <local:Component ImageSource="/Images/Router.png"
-                             Text="{x:Static local:Component.RouterComponentText}"/>
-            <local:Component ImageSource="/Images/Line.png"
-                             Text="{x:Static local:Component.LineComponentText}"/>
-            <local:Component ImageSource="/Images/Cursor.png"
-                             Text="{x:Static local:Component.SelectComponentText}"/>
-            <local:Component ImageSource="/Images/Packet.png"
-                             Text="{x:Static local:Component.PacketComponentText}"/>
-        </ListView>
-        
-        <!-- Packet console -->
-        <StackPanel x:Name="PacketConsoleStackPanel"
-                    Grid.Row="3"
-                    Grid.ColumnSpan="2">
-            <ScrollViewer MaxHeight="100" x:Name="PacketConsoleScrollViewer">
-                <TextBlock x:Name="PacketConsoleTextBlock" 
-                           ScrollViewer.CanContentScroll="True" 
-                           ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-            </ScrollViewer>
-        </StackPanel>
-
-        <!-- Router data -->
-        <StackPanel x:Name="RouterDataStackPanel"
-                    Orientation="Vertical" 
-                    Grid.Row="1"
-                    Grid.Column="1" 
-                    Visibility="{Binding RouterDataVisibility}">
-            <TextBlock Text="Name:"/>
-            <TextBox Text="{Binding HighlightedRouter.Name, Mode=TwoWay}" TextChanged="NameTextBox_TextChanged"/>
-            <TextBlock Text="IP address:"/>
-            <TextBox Text="{Binding HighlightedRouter.Address, Mode=TwoWay}" TextChanged="AddressTextBox_TextChanged"/>
-        </StackPanel>
+        <local:ComponentSelectionUserControl Grid.Row="3" Grid.ColumnSpan="2"/>
+        <local:PacketConsoleUserControl Grid.Row="3" Grid.ColumnSpan="2"/>
+        <local:MenuSelectionUserControl Grid.Row="2" Grid.ColumnSpan="2"/>
+        <local:RouterDataUserControl Grid.Row="1" Grid.Column="1"/>
     </Grid>
 </Window>

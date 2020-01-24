@@ -101,23 +101,7 @@ namespace WebPacketSimulator.Wpf
                 lastRouter = destinationRouter;
             }
             MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(messageImage);
-            MainWindow.UpdatePacketConsole(path);
-        }
-
-        /// <summary>
-        /// This function updates the visibility of the router data (the data which is used to modify router data)
-        /// </summary>
-        static void UpdateRouterDataVisibility()
-        {
-            var mainWindow = (Application.Current.MainWindow as MainWindow);
-            if (WpfRouter.HighlightedRouters.Count == 1)
-            {
-                mainWindow.ShowRouterData();
-            }
-            else
-            {
-                mainWindow.HideRouterData();
-            }
+            PacketConsoleUserControl.UpdatePacketConsole(path);
         }
 
         /// <summary>
@@ -130,7 +114,7 @@ namespace WebPacketSimulator.Wpf
         {
             if(MainCanvasUserControl.IsMessageAnimationRunning == true)
             {
-                MainWindow.UpdatePacketConsole();
+                PacketConsoleUserControl.UpdatePacketConsole();
             }
 
             if(sourceRouter.Router.LinkedRouters.Contains(destinationRouter.Router) == false)
@@ -158,7 +142,7 @@ namespace WebPacketSimulator.Wpf
             {
                 From = fromThickness,
                 To = toThickness,
-                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 / MainWindow.CurrentMainWindow.AnimationSpeed)),
+                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 / AnimationSpeedUserControl.AnimationSpeedUC.AnimationSpeed)),
                 FillBehavior = FillBehavior.Stop
             };
             EventHandler OnCompleted = null;
@@ -168,7 +152,7 @@ namespace WebPacketSimulator.Wpf
                 animation.Completed -= OnCompleted;
                 MainCanvasUserControl.IsMessageAnimationRunning = false;
                 MainWindow.PacketImage.Margin = toThickness;
-                MainWindow.UpdatePacketConsole(sourceRouter.Router, destinationRouter.Router, isFirstAnimation);
+                PacketConsoleUserControl.UpdatePacketConsole(sourceRouter.Router, destinationRouter.Router, isFirstAnimation);
             };
             animation.Completed += OnCompleted;
             MainCanvasUserControl.IsMessageAnimationRunning = true;
@@ -193,7 +177,7 @@ namespace WebPacketSimulator.Wpf
             router.IsHighlighted = true;
             router.RouterImage.Source = new BitmapImage(new Uri("/Images/HighlightedRouter.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Add(router);
-            UpdateRouterDataVisibility();
+            RouterDataUserControl.UpdateRouterDataVisibility();
         }
 
         /// <summary>
@@ -217,7 +201,7 @@ namespace WebPacketSimulator.Wpf
             router.IsHighlighted = false;
             router.RouterImage.Source = new BitmapImage(new Uri("/Images/Router.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Remove(router);
-            UpdateRouterDataVisibility();
+            RouterDataUserControl.UpdateRouterDataVisibility();
         }
 
         /// <summary>

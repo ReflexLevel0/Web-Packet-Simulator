@@ -10,8 +10,40 @@ namespace WebPacketSimulator.Common
     public class Router
     {
         public List<Router> LinkedRouters = new List<Router>();
-        public string Name { get; set; }
-        public string Address { get; set; }
+
+        #region Name
+        public EventHandler NameChanged;
+        string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    NameChanged?.Invoke(null, null);
+                }
+            }
+        }
+        #endregion
+
+        #region Address
+        public EventHandler AddressChanged;
+        string address;
+        public string Address
+        {
+            get => address;
+            set
+            {
+                if (address != value)
+                {
+                    address = value;
+                    AddressChanged?.Invoke(null, null);
+                }
+            }
+        }
+        #endregion
 
         /// <summary>
         /// This function returns the shortest path from this router to the chosen router
