@@ -81,7 +81,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         /// <param name="source"></param>
         /// <param name="destination"></param>
-        public async static Task SendPacket(WpfRouter source, WpfRouter destination, MainWindow mainWindow)
+        public async static Task SendPacket(WpfRouter source, WpfRouter destination)
         {
             //Getting path to destination and setting up message image
             var path = source.Router.GetPathToRouter(WpfRouter.GetRouters().ToList(),
@@ -89,7 +89,7 @@ namespace WebPacketSimulator.Wpf
             path.RemoveAt(0);
             var messageImage = MainWindow.PacketImage;
             messageImage.Margin = source.RouterCanvas.Margin;
-            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(messageImage);
+            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(messageImage);
             Canvas.SetZIndex(messageImage, 1);
             var lastRouter = source;
 
@@ -100,7 +100,7 @@ namespace WebPacketSimulator.Wpf
                 await AnimatePacket(lastRouter, destinationRouter, destinationRouter.Router == path[0]);
                 lastRouter = destinationRouter;
             }
-            MainWindow.CurrentMainWindow.MainCanvas.Children.Remove(messageImage);
+            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(messageImage);
             MainWindow.UpdatePacketConsole(path);
         }
 
@@ -128,7 +128,7 @@ namespace WebPacketSimulator.Wpf
         /// <returns></returns>
         public static Task AnimatePacket(WpfRouter sourceRouter, WpfRouter destinationRouter, bool isFirstAnimation)
         {
-            if(MainWindow.IsMessageAnimationRunning == true)
+            if(MainCanvasUserControl.IsMessageAnimationRunning == true)
             {
                 MainWindow.UpdatePacketConsole();
             }
@@ -158,7 +158,7 @@ namespace WebPacketSimulator.Wpf
             {
                 From = fromThickness,
                 To = toThickness,
-                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 * MainWindow.CurrentMainWindow.AnimationSpeed)),
+                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 / MainWindow.CurrentMainWindow.AnimationSpeed)),
                 FillBehavior = FillBehavior.Stop
             };
             EventHandler OnCompleted = null;
@@ -166,12 +166,12 @@ namespace WebPacketSimulator.Wpf
             {
                 taskCompleted.SetResult(true);
                 animation.Completed -= OnCompleted;
-                MainWindow.IsMessageAnimationRunning = false;
+                MainCanvasUserControl.IsMessageAnimationRunning = false;
                 MainWindow.PacketImage.Margin = toThickness;
                 MainWindow.UpdatePacketConsole(sourceRouter.Router, destinationRouter.Router, isFirstAnimation);
             };
             animation.Completed += OnCompleted;
-            MainWindow.IsMessageAnimationRunning = true;
+            MainCanvasUserControl.IsMessageAnimationRunning = true;
             MainWindow.PacketImage.BeginAnimation(Image.MarginProperty, animation, HandoffBehavior.SnapshotAndReplace);
             return taskCompleted.Task;
         }

@@ -23,3 +23,5 @@ C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacket
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MenuUserControl.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\AnimationSpeedUserControl.g.cs
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\AnimationSpeedUserControl.baml
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainCanvasUserControl.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainCanvasUserControl.baml

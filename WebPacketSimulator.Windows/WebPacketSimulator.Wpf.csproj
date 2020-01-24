@@ -56,6 +56,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="WpfControls\MainCanvasUserControl.xaml.cs">
+      <DependentUpon>MainCanvasUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WpfControls\AnimationSpeedUserControl.xaml.cs">
       <DependentUpon>AnimationSpeedUserControl.xaml</DependentUpon>
     </Compile>
@@ -70,6 +73,10 @@
     <Compile Include="Converters\LineMarginToRouterCenter.cs" />
     <Compile Include="VisualHelpers.cs" />
     <Compile Include="WpfRouter.cs" />
+    <Page Include="WpfControls\MainCanvasUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WpfControls\AnimationSpeedUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -22,6 +22,8 @@ namespace WebPacketSimulator.Wpf
     public partial class AnimationSpeedUserControl : UserControl, INotifyPropertyChanged
     {
         #region Variables
+        public static AnimationSpeedUserControl AnimationSpeedUC;
+
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
         public static readonly DependencyProperty AnimationSpeedProperty =
@@ -38,6 +40,7 @@ namespace WebPacketSimulator.Wpf
 
         public AnimationSpeedUserControl()
         {
+            AnimationSpeedUC = this;
             InitializeComponent();
             DataContext = this;
         }

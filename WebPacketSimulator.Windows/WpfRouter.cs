@@ -83,8 +83,8 @@ namespace WebPacketSimulator.Wpf
             routerA.Router.LinkedRouters.Add(routerB.Router);
             routerB.Router.LinkedRouters.Add(routerA.Router);
             Connections.Add(connection);
-            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(connection.ConnectionLine);
-            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(connection.BackupConnectionLine);
+            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(connection.ConnectionLine);
+            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(connection.BackupConnectionLine);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace WebPacketSimulator.Wpf
                                        select connection).ToList();
             foreach (var _connection in connectionsToRemove)
             {
-                MainWindow.CurrentMainWindow.MainCanvas.Children.Remove(_connection.ConnectionLine);
+                MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(_connection.ConnectionLine);
                 Connections.Remove(_connection);
             }
         }
@@ -154,7 +154,7 @@ namespace WebPacketSimulator.Wpf
             newRouter.RouterStackPanel.Children.Add(newRouter.RouterAddressTextBlock);
             WpfRouter.Routers.Add(newRouter);
             newRouter.UnhighlightRouter();
-            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(newRouter.RouterCanvas);
+            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(newRouter.RouterCanvas);
             Canvas.SetZIndex(newRouter.RouterCanvas, 1);
             return newRouter;
         }
@@ -208,7 +208,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void Delete()
         {
-            MainWindow.CurrentMainWindow.MainCanvas.Children.Remove(RouterCanvas);
+            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(RouterCanvas);
             this.UnhighlightRouter();
             Routers.Remove(this);
             var connections = (from connection in Connections

@@ -35,17 +35,8 @@
         </Grid.ColumnDefinitions>
 
         <local:MenuUserControl/>
-        <local:AnimationSpeedUserControl x:Name="AnimationSpeedUC" Grid.Column="1"/>
-
-        <!-- Main canvas -->
-        <Canvas x:Name="MainCanvas" 
-                MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"
-                MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
-                MouseMove="MainCanvas_MouseMove"
-                Background="White"
-                Grid.Row="1"
-                Grid.RowSpan="3">
-        </Canvas>
+        <local:AnimationSpeedUserControl Grid.Column="1"/>
+        <local:MainCanvasUserControl Grid.Row="1" Grid.RowSpan="3"/>
 
         <!-- Menu selection -->
         <StackPanel Orientation="Horizontal"
