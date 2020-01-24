@@ -101,6 +101,7 @@ namespace WebPacketSimulator.Wpf
                 lastRouter = destinationRouter;
             }
             MainWindow.Canvas.Children.Remove(messageImage);
+            MainWindow.UpdatePacketConsole(path);
         }
 
         /// <summary>
@@ -157,7 +158,7 @@ namespace WebPacketSimulator.Wpf
             {
                 From = fromThickness,
                 To = toThickness,
-                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250)),
+                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 * MainWindow.GetCurrentMainWindow().AnimationSpeed)),
                 FillBehavior = FillBehavior.Stop
             };
             EventHandler OnCompleted = null;

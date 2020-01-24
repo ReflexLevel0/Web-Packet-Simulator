@@ -94,6 +94,20 @@ namespace WebPacketSimulator.Wpf
         public enum Menus { Components, PacketConsole }
 
         string currentFilePath = null;
+
+        double animationSpeed = 1;
+        public double AnimationSpeed
+        {
+            get => animationSpeed;
+            set
+            {
+                if (animationSpeed != value)
+                {
+                    animationSpeed = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(AnimationSpeed)));
+                }
+            }
+        }
         #endregion
 
         #region Static variables
@@ -347,6 +361,19 @@ namespace WebPacketSimulator.Wpf
             var mainWindow = GetCurrentMainWindow();
             mainWindow.PacketConsoleTextBlock.Text += "\nMessage animation canceled!\n";
         }
+
+        /// <summary>
+        /// This function updates the console to show data summary after packet animation has ended
+        /// </summary>
+        /// <param name="path"> Packet's path </param>
+        public static void UpdatePacketConsole(List<Router> path)
+        {
+            var mainWindow = GetCurrentMainWindow();
+            StringBuilder text = new StringBuilder(128);
+            text.AppendLine();
+            text.Append(string.Format("Path length: {0}", path.Count));
+            mainWindow.PacketConsoleTextBlock.Text += text.ToString();
+        }
         #endregion
 
         #region Command binding
@@ -538,6 +565,26 @@ namespace WebPacketSimulator.Wpf
                         break;
                 }
             }
+        }
+
+        private void SlowDownAnimationButton_Click(object sender, RoutedEventArgs e)
+        {
+            double newSpeed = AnimationSpeed / 2;
+            if(newSpeed < 0.25)
+            {
+                return;
+            }
+            AnimationSpeed = newSpeed;
+        }
+
+        private void SpeedUpAnimationButton_Click(object sender, RoutedEventArgs e)
+        {
+            double newSpeed = AnimationSpeed * 2;
+            if(newSpeed > 4)
+            {
+                return;
+            }
+            AnimationSpeed = newSpeed;
         }
     }
 }

@@ -35,7 +35,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- Menu -->
-        <Menu Grid.ColumnSpan="2">
+        <Menu>
             <MenuItem Header="_File">
                 <MenuItem Header="_Save" 
                           Command="Save" 
@@ -53,6 +53,13 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
+        
+        <!-- Animation speed -->
+        <StackPanel Orientation="Horizontal" Grid.Column="1">
+            <Button Content="&lt;" Click="SlowDownAnimationButton_Click"/>
+            <TextBlock Text="{Binding AnimationSpeed, StringFormat={}{0:F2}x}"/>
+            <Button Content="&gt;" Click="SpeedUpAnimationButton_Click"/>
+        </StackPanel>        
         
         <!-- Main canvas -->
         <Canvas x:Name="MainCanvas" 
