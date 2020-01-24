@@ -52,7 +52,7 @@ namespace WebPacketSimulator.Wpf {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/WebPacketSimulator.Windows;component/wpfcontrols/component.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/WebPacketSimulator.Wpf;component/wpfcontrols/component.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\WpfControls\Component.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

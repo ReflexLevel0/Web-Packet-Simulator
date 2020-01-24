@@ -27,7 +27,7 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        #region Local variables
+        #region Variables
         System.Windows.Point previousMousePosition = new System.Windows.Point();
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         enum Components { Select, Router, Line, Packet }
@@ -95,37 +95,38 @@ namespace WebPacketSimulator.Wpf
 
         string currentFilePath = null;
 
-        double animationSpeed = 1;
+        public static readonly DependencyProperty AnimationSpeedProperty =
+            DependencyProperty.Register(nameof(AnimationSpeed), typeof(double), typeof(MainWindow));
         public double AnimationSpeed
         {
-            get => animationSpeed;
+            get => (double)GetValue(AnimationSpeedProperty);
             set
             {
-                if (animationSpeed != value)
-                {
-                    animationSpeed = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(AnimationSpeed)));
-                }
+                SetValue(AnimationSpeedProperty, value);
             }
         }
-        #endregion
-
-        #region Static variables
-        public static Canvas Canvas;
+        
         public static Image PacketImage = new Image()
         {
             Source = new BitmapImage(new Uri("/Images/Packet.png", UriKind.Relative)),
             Width = 24,
             Height = 24
         };
+
+        public static MainWindow CurrentMainWindow;
         #endregion
 
         public MainWindow()
         {
+            CurrentMainWindow = this;
             InitializeComponent();
             DataContext = this;
-            Canvas = MainCanvas;
             ChangeMenu(Menus.Components);
+            var animationSpeedBinding = new Binding("AnimationSpeed") { 
+                Source = AnimationSpeedUC, 
+                Mode = BindingMode.OneWay
+            };
+            SetBinding(AnimationSpeedProperty, animationSpeedBinding);
         }
 
         #region Mouse
@@ -200,7 +201,7 @@ namespace WebPacketSimulator.Wpf
                 //If this is second (last) part of the connection
                 else
                 {
-                    Canvas.Children.Remove(currentLine);
+                    MainCanvas.Children.Remove(currentLine);
                     currentLine = null;
                     WpfRouter.ConnectRouters(WpfRouter.LastClickedRouter, clickedRouter);
                 }
@@ -234,7 +235,7 @@ namespace WebPacketSimulator.Wpf
 
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var clickPosition = e.GetPosition(Canvas);
+            var clickPosition = e.GetPosition(MainCanvas);
             var clickedRouter = clickPosition.GetRouterOnLocation();
             if (clickedRouter != null && SelectedComponent == Components.Router)
             {
@@ -299,7 +300,7 @@ namespace WebPacketSimulator.Wpf
         /// <param name="firstAnimation"> If true, new linw will be appended before new text </param>
         public static void UpdatePacketConsole(Router sourceRouter, Router destinationRouter, bool firstAnimation)
         {
-            var mainWindow = GetCurrentMainWindow();
+            var mainWindow = CurrentMainWindow;
             var textBlock = mainWindow.PacketConsoleTextBlock;
             var scroll = mainWindow.PacketConsoleScrollViewer;
             bool automaticScroll = Math.Abs(scroll.ActualHeight + scroll.VerticalOffset - scroll.ExtentHeight) < 1;
@@ -358,8 +359,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public static void UpdatePacketConsole()
         {
-            var mainWindow = GetCurrentMainWindow();
-            mainWindow.PacketConsoleTextBlock.Text += "\nMessage animation canceled!\n";
+            CurrentMainWindow.PacketConsoleTextBlock.Text += "\nMessage animation canceled!\n";
         }
 
         /// <summary>
@@ -368,11 +368,10 @@ namespace WebPacketSimulator.Wpf
         /// <param name="path"> Packet's path </param>
         public static void UpdatePacketConsole(List<Router> path)
         {
-            var mainWindow = GetCurrentMainWindow();
             StringBuilder text = new StringBuilder(128);
             text.AppendLine();
             text.Append(string.Format("Path length: {0}", path.Count));
-            mainWindow.PacketConsoleTextBlock.Text += text.ToString();
+            CurrentMainWindow.PacketConsoleTextBlock.Text += text.ToString();
         }
         #endregion
 
@@ -444,8 +443,6 @@ namespace WebPacketSimulator.Wpf
             router.RouterAddressTextBlock.Text = (sender as TextBox).Text;
         }
         #endregion
-
-        public static MainWindow GetCurrentMainWindow() => Application.Current.MainWindow as MainWindow;
 
         private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -565,26 +562,6 @@ namespace WebPacketSimulator.Wpf
                         break;
                 }
             }
-        }
-
-        private void SlowDownAnimationButton_Click(object sender, RoutedEventArgs e)
-        {
-            double newSpeed = AnimationSpeed / 2;
-            if(newSpeed < 0.25)
-            {
-                return;
-            }
-            AnimationSpeed = newSpeed;
-        }
-
-        private void SpeedUpAnimationButton_Click(object sender, RoutedEventArgs e)
-        {
-            double newSpeed = AnimationSpeed * 2;
-            if(newSpeed > 4)
-            {
-                return;
-            }
-            AnimationSpeed = newSpeed;
         }
     }
 }

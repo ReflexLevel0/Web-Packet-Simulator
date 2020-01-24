@@ -89,7 +89,7 @@ namespace WebPacketSimulator.Wpf
             path.RemoveAt(0);
             var messageImage = MainWindow.PacketImage;
             messageImage.Margin = source.RouterCanvas.Margin;
-            MainWindow.Canvas.Children.Add(messageImage);
+            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(messageImage);
             Canvas.SetZIndex(messageImage, 1);
             var lastRouter = source;
 
@@ -100,7 +100,7 @@ namespace WebPacketSimulator.Wpf
                 await AnimatePacket(lastRouter, destinationRouter, destinationRouter.Router == path[0]);
                 lastRouter = destinationRouter;
             }
-            MainWindow.Canvas.Children.Remove(messageImage);
+            MainWindow.CurrentMainWindow.MainCanvas.Children.Remove(messageImage);
             MainWindow.UpdatePacketConsole(path);
         }
 
@@ -158,7 +158,7 @@ namespace WebPacketSimulator.Wpf
             {
                 From = fromThickness,
                 To = toThickness,
-                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 * MainWindow.GetCurrentMainWindow().AnimationSpeed)),
+                Duration = new Duration(TimeSpan.FromSeconds(pathLength / 250 * MainWindow.CurrentMainWindow.AnimationSpeed)),
                 FillBehavior = FillBehavior.Stop
             };
             EventHandler OnCompleted = null;

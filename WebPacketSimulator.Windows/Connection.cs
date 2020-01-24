@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Shapes;
 using static WebPacketSimulator.Wpf.MainWindow;
 
@@ -26,9 +27,10 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void Delete()
         {
+            Canvas canvas = MainWindow.CurrentMainWindow.MainCanvas;
             HighlightedLines.Remove(ConnectionLine);
-            Canvas.Children.Remove(ConnectionLine);
-            Canvas.Children.Remove(BackupConnectionLine);
+            canvas.Children.Remove(ConnectionLine);
+            canvas.Children.Remove(BackupConnectionLine);
             Connections.Remove(this);
         }
     }

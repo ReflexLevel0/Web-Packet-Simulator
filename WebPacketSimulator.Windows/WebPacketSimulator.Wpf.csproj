@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B3CDA92C-99BA-404F-82B4-3D1D25A21E08}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>WebPacketSimulator.Windows</RootNamespace>
-    <AssemblyName>WebPacketSimulator.Windows</AssemblyName>
+    <RootNamespace>WebPacketSimulator.Wpf</RootNamespace>
+    <AssemblyName>WebPacketSimulator.Wpf</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -56,7 +56,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="WpfControls\AnimationSpeedUserControl.xaml.cs">
+      <DependentUpon>AnimationSpeedUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FileHandler.cs" />
+    <Compile Include="WpfControls\MenuUserControl.xaml.cs">
+      <DependentUpon>MenuUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WpfControls\Component.xaml.cs">
       <DependentUpon>Component.xaml</DependentUpon>
     </Compile>
@@ -64,6 +70,14 @@
     <Compile Include="Converters\LineMarginToRouterCenter.cs" />
     <Compile Include="VisualHelpers.cs" />
     <Compile Include="WpfRouter.cs" />
+    <Page Include="WpfControls\AnimationSpeedUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WpfControls\MenuUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WpfControls\Component.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -145,5 +159,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

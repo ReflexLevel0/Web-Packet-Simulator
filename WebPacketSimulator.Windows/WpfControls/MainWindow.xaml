@@ -34,33 +34,9 @@
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Menu -->
-        <Menu>
-            <MenuItem Header="_File">
-                <MenuItem Header="_Save" 
-                          Command="Save" 
-                          InputGestureText="Ctrl+S">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/Save.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="_Open" 
-                          Command="Open" 
-                          InputGestureText="Ctrl+O">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/Open.png"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>
-        </Menu>
-        
-        <!-- Animation speed -->
-        <StackPanel Orientation="Horizontal" Grid.Column="1">
-            <Button Content="&lt;" Click="SlowDownAnimationButton_Click"/>
-            <TextBlock Text="{Binding AnimationSpeed, StringFormat={}{0:F2}x}"/>
-            <Button Content="&gt;" Click="SpeedUpAnimationButton_Click"/>
-        </StackPanel>        
-        
+        <local:MenuUserControl/>
+        <local:AnimationSpeedUserControl x:Name="AnimationSpeedUC" Grid.Column="1"/>
+
         <!-- Main canvas -->
         <Canvas x:Name="MainCanvas" 
                 MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"

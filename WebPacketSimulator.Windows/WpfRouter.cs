@@ -83,8 +83,8 @@ namespace WebPacketSimulator.Wpf
             routerA.Router.LinkedRouters.Add(routerB.Router);
             routerB.Router.LinkedRouters.Add(routerA.Router);
             Connections.Add(connection);
-            MainWindow.Canvas.Children.Add(connection.ConnectionLine);
-            MainWindow.Canvas.Children.Add(connection.BackupConnectionLine);
+            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(connection.ConnectionLine);
+            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(connection.BackupConnectionLine);
         }
 
         /// <summary>
@@ -104,12 +104,12 @@ namespace WebPacketSimulator.Wpf
                                        select connection).ToList();
             foreach (var _connection in connectionsToRemove)
             {
-                MainWindow.Canvas.Children.Remove(_connection.ConnectionLine);
+                MainWindow.CurrentMainWindow.MainCanvas.Children.Remove(_connection.ConnectionLine);
                 Connections.Remove(_connection);
             }
         }
 
-        /// <summary>
+        /// <summary>+
         /// This function moves the selected routers for a desired ammount
         /// </summary>
         /// <param name="routers"> Router which will be moved </param>
@@ -154,7 +154,7 @@ namespace WebPacketSimulator.Wpf
             newRouter.RouterStackPanel.Children.Add(newRouter.RouterAddressTextBlock);
             WpfRouter.Routers.Add(newRouter);
             newRouter.UnhighlightRouter();
-            MainWindow.GetCurrentMainWindow().MainCanvas.Children.Add(newRouter.RouterCanvas);
+            MainWindow.CurrentMainWindow.MainCanvas.Children.Add(newRouter.RouterCanvas);
             Canvas.SetZIndex(newRouter.RouterCanvas, 1);
             return newRouter;
         }
@@ -208,7 +208,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void Delete()
         {
-            MainWindow.Canvas.Children.Remove(RouterCanvas);
+            MainWindow.CurrentMainWindow.MainCanvas.Children.Remove(RouterCanvas);
             this.UnhighlightRouter();
             Routers.Remove(this);
             var connections = (from connection in Connections
