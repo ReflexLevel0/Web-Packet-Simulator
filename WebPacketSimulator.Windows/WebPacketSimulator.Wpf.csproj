@@ -56,7 +56,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Shortcut.cs" />
+    <Compile Include="Commands\HelpCommand.cs" />
+    <Compile Include="Commands\DeleteCommand.cs" />
+    <Compile Include="Models\Shortcut.cs" />
+    <Compile Include="Commands\OpenCommand.cs" />
+    <Compile Include="Commands\SaveCommand.cs" />
+    <Compile Include="Commands\SlowDownAnimationCommand.cs" />
+    <Compile Include="Commands\SpeedUpAnimationCommand.cs" />
+    <Compile Include="Commands\UnhighlightCommand.cs" />
     <Compile Include="WpfControls\HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>
@@ -78,7 +85,7 @@
     <Compile Include="WpfControls\AnimationSpeed.xaml.cs">
       <DependentUpon>AnimationSpeed.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FileHandler.cs" />
+    <Compile Include="Models\FileHandler.cs" />
     <Compile Include="WpfControls\Menu.xaml.cs">
       <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
@@ -87,8 +94,8 @@
     </Compile>
     <Compile Include="Converters\BackupLineMarginToRouterConverter.cs" />
     <Compile Include="Converters\LineMarginToRouterCenter.cs" />
-    <Compile Include="VisualHelpers.cs" />
-    <Compile Include="WpfRouter.cs" />
+    <Compile Include="Models\VisualHelpers.cs" />
+    <Compile Include="Models\WpfRouter.cs" />
     <Page Include="WpfControls\HelpWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -133,7 +140,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Connection.cs" />
+    <Compile Include="Models\Connection.cs" />
     <Compile Include="WpfControls\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

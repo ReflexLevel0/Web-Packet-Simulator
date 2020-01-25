@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +19,29 @@ namespace WebPacketSimulator.Wpf
     /// <summary>
     /// Interaction logic for MenuUserControl.xaml
     /// </summary>
-    public partial class Menu : UserControl
+    public partial class Menu : UserControl, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        bool deleteMenuItemIsEnabled;
+        bool DeleteMenuItemIsEnabled
+        {
+            get => deleteMenuItemIsEnabled;
+            set
+            {
+                if (deleteMenuItemIsEnabled != value)
+                {
+                    deleteMenuItemIsEnabled = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(DeleteMenuItemIsEnabled)));
+                }
+            }
+        }
+        
         public Menu()
         {
+            WpfRouter.HighlightedRoutersCollectionChanged += delegate
+            {
+                DeleteMenuItemIsEnabled = (WpfRouter.Routers.Count == 0) ? false : true;
+            };
             InitializeComponent();
         }
 

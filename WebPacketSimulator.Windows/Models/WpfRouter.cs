@@ -32,10 +32,22 @@ namespace WebPacketSimulator.Wpf
         public Router Router { get; set; }
         public static double RouterImageWidth { get; } = 50;
         public static double RouterImageHeight { get; } = 50;
-        public static List<WpfRouter> HighlightedRouters = new List<WpfRouter>();
+        public static ObservableCollection<WpfRouter> HighlightedRouters = new ObservableCollection<WpfRouter>();
         public static ObservableCollection<WpfRouter> Routers = new ObservableCollection<WpfRouter>();
+        public static EventHandler HighlightedRoutersCollectionChanged;
         public static WpfRouter LastClickedRouter = null;
         public bool IsHighlighted;
+
+        static WpfRouter()
+        {
+            HighlightedRouters.CollectionChanged += delegate 
+            { 
+                if(HighlightedRoutersCollectionChanged != null)
+                {
+                    HighlightedRoutersCollectionChanged.Invoke(null, null);
+                }
+            };
+        }
 
         /// <summary>
         /// This function is used for connecting 2 routers
@@ -114,11 +126,11 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         /// <param name="routers"> Router which will be moved </param>
         /// <param name="moveAmmount"> Ammount (in x and y coordinates) for which a router will be moved </param>
-        public static void MoveRouters(List<WpfRouter> routers, Point moveAmmount)
+        public static void MoveRouters(IEnumerable<WpfRouter> routers, Point moveAmmount)
         {
-            for (int i = 0; i < routers.Count; i++)
+            for (int i = 0; i < routers.Count(); i++)
             {
-                var router = routers[i];
+                var router = routers.ElementAt(i);
                 double leftMargin = router.RouterCanvas.Margin.Left + moveAmmount.X;
                 double topMargin = router.RouterCanvas.Margin.Top + moveAmmount.Y;
                 router.RouterCanvas.Margin = new Thickness(leftMargin, topMargin, 0, 0);
@@ -135,8 +147,8 @@ namespace WebPacketSimulator.Wpf
         public static WpfRouter CreateRouter(Point location, string address = null, string name = null)
         {
             //Creating router image and setting margins
-            Point imageMargin = new Point((int)(location.X - RouterImageWidth / 2),
-                                               (int)(location.Y - RouterImageHeight / 2));
+            Point imageMargin = new Point((int)location.X,
+                                               (int)location.Y);
             var newRouter = new WpfRouter()
             {
                 Router = new Router() { Address = address, Name = name },
@@ -163,6 +175,7 @@ namespace WebPacketSimulator.Wpf
                 newRouter.RouterAddressTextBlock.Text = newRouter.Router.Address; 
             };
             Routers.Add(newRouter);
+            newRouter.UnhighlightRouter(false);
             MainCanvas.Instance.Canvas.Children.Add(newRouter.RouterCanvas);
             Canvas.SetZIndex(newRouter.RouterCanvas, 1);
             return newRouter;
@@ -218,7 +231,7 @@ namespace WebPacketSimulator.Wpf
         public void Delete()
         {
             MainCanvas.Instance.Canvas.Children.Remove(RouterCanvas);
-            this.UnhighlightRouter();
+            this.UnhighlightRouter(true);
             Routers.Remove(this);
             var connections = (from connection in Connections
                                where connection.SourceRouter == this
@@ -261,7 +274,7 @@ namespace WebPacketSimulator.Wpf
             }
             else
             {
-                HighlightedLines.UnhighlightAllLines();
+                HighlightedConnections.UnhighlightAllLines();
                 connection.ConnectionLine.HighlightLine();
             }
             e.Handled = true;

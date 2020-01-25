@@ -184,11 +184,11 @@ namespace WebPacketSimulator.Wpf
         /// This function highlights all routers from a list of routers
         /// </summary>
         /// <param name="routers"> Routers to be highlighted </param>
-        public static void HighlightAllRouters(this List<WpfRouter> routers)
+        public static void HighlightAllRouters(this IEnumerable<WpfRouter> routers)
         {
-            while (routers.Count != 0)
+            while (routers.Count() != 0)
             {
-                routers[0].HighlightRouter();
+                routers.First().HighlightRouter();
             }
         }
 
@@ -196,23 +196,28 @@ namespace WebPacketSimulator.Wpf
         /// This function unhighlights the selected router
         /// </summary>
         /// <param name="router"> Router to be unhighlighted </param>
-        public static void UnhighlightRouter(this WpfRouter router)
+        /// <param name="updateRouterDataVisibility"> If true, router data visibility will be updated  </param>
+        public static void UnhighlightRouter(this WpfRouter router, bool updateRouterDataVisibility)
         {
             router.IsHighlighted = false;
             router.RouterImage.Source = new BitmapImage(new Uri("/Images/Router.png", UriKind.Relative));
             WpfRouter.HighlightedRouters.Remove(router);
-            RouterData.UpdateRouterDataVisibility();
+            if (updateRouterDataVisibility == true)
+            {
+                RouterData.UpdateRouterDataVisibility();
+            }
         }
 
         /// <summary>
         /// This function unhighlights all routers from a list of routers
         /// </summary>
         /// <param name="routers"> Routers to be unhighlighted </param>
-        public static void UnhighlightAllRouters(this List<WpfRouter> routers)
+        /// <param name="updateRouterDataVisibility"> If true, router data visibility will be updated </param>
+        public static void UnhighlightAllRouters(this IEnumerable<WpfRouter> routers, bool updateRouterDataVisibility)
         {
-            while (routers.Count != 0)
+            while (routers.Count() != 0)
             {
-                routers[0].UnhighlightRouter();
+                routers.First().UnhighlightRouter(updateRouterDataVisibility);
             }
         }
 
@@ -223,7 +228,7 @@ namespace WebPacketSimulator.Wpf
         public static void HighlightLine(this Line connectionLine)
         {
             connectionLine.Opacity = Connection.HighlightedConnectionLineOpacity;
-            Connection.HighlightedLines.Add(connectionLine);
+            Connection.HighlightedConnections.Add(connectionLine);
         }
 
         /// <summary>
@@ -245,7 +250,7 @@ namespace WebPacketSimulator.Wpf
         public static void UnhighlightLine(this Line connectionLine)
         {
             connectionLine.Opacity = 1;
-            Connection.HighlightedLines.Remove(connectionLine);
+            Connection.HighlightedConnections.Remove(connectionLine);
         }
 
         /// <summary>

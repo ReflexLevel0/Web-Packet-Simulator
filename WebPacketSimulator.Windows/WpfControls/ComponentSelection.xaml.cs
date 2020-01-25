@@ -32,7 +32,7 @@ namespace WebPacketSimulator.Wpf
 
         private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+            WpfRouter.HighlightedRouters.UnhighlightAllRouters(true);
             WpfRouter.LastClickedRouter = null;
             var selectedValue = ((sender as ListView).SelectedValue as Component).Text.ToString();
             if (selectedValue.CompareTo(Component.RouterComponentText) == 0)

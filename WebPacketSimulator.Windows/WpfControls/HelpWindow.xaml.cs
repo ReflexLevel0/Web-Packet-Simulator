@@ -21,7 +21,29 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class HelpWindow : Window
     {
+        MediaElement packetSimulation;
         public ObservableCollection<Shortcut> Shortcuts { get; set; } = new ObservableCollection<Shortcut>();
+        public static readonly DependencyProperty IsPacketSimulationExpandedProperty =
+            DependencyProperty.Register(nameof(IsPacketSimulationExpanded), 
+                                        typeof(bool), typeof(HelpWindow), 
+                                        new PropertyMetadata(false, OnIsPacketSimulationExpandedPropertyChanged));
+        public bool IsPacketSimulationExpanded
+        {
+            get => (bool)GetValue(IsPacketSimulationExpandedProperty);
+            set
+            {
+                SetValue(IsPacketSimulationExpandedProperty, value);
+                if (IsPacketSimulationExpanded)
+                {
+                    packetSimulation.Play();
+                }
+                else
+                {
+                    packetSimulation.Stop();
+                }
+            }
+        }
+
         public HelpWindow()
         {
             foreach (var shortcut in Shortcut.Shortcuts)
@@ -29,7 +51,13 @@ namespace WebPacketSimulator.Wpf
                 Shortcuts.Add(shortcut);
             }
             InitializeComponent();
+            packetSimulation = PacketSimulationVideo;
             DataContext = this;
+        }
+
+        static void OnIsPacketSimulationExpandedPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            (o as HelpWindow).IsPacketSimulationExpanded = (bool)e.NewValue;
         }
     }
 }

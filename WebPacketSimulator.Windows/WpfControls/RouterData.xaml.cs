@@ -47,7 +47,7 @@ namespace WebPacketSimulator.Wpf
             get => routerName;
             set
             {
-                if(routerName != value)
+                if (routerName != value)
                 {
                     routerName = value;
                     PropertyChanged(this, new PropertyChangedEventArgs(nameof(RouterName)));
@@ -105,7 +105,13 @@ namespace WebPacketSimulator.Wpf
         /// <param name="show"> If true, opacity will become 1, otherwise router data will become invisible </param>
         public static void AnimateRouterDataOpacity(bool show)
         {
-            Instance.RouterDataStackPanel.Opacity = 0;
+            if ((RouterData.Instance.RouterDataVisibility == Visibility.Visible &&
+                show == true) ||
+                (RouterData.Instance.RouterDataVisibility != Visibility.Visible &&
+                show == false))
+            {
+                return;
+            }
             DoubleAnimation animation = new DoubleAnimation();
             animation.From = (show == true) ? 0 : 1;
             animation.To = (show == true) ? 1 : 0;
@@ -127,7 +133,6 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public static void UpdateRouterDataVisibility()
         {
-            var mainWindow = (Application.Current.MainWindow as MainWindow);
             if (WpfRouter.HighlightedRouters.Count == 1)
             {
                 Instance.ShowRouterData();

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Menu FontSize="{Binding RelativeSource={RelativeSource 
                              Mode=FindAncestor, 
                              AncestorType={x:Type local:Menu}}, 
@@ -26,6 +27,7 @@
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
+        <MenuItem Header="_Delete" IsEnabled="{Binding DeleteMenuItemIsEnabled}"/>
         <MenuItem Header="_Help" Click="HelpMenuItem_Click"/>
     </Menu>
 </UserControl>

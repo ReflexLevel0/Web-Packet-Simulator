@@ -15,28 +15,38 @@ namespace WebPacketSimulator.Wpf
             new Shortcut()
             { 
                 ShortcutKeyCombination = "Ctrl + O", 
-                ShortcutDescription = "open a file" 
+                ShortcutDescription = "Open a file" 
             },
             new Shortcut()
             { 
                 ShortcutKeyCombination = "Ctrl + S", 
-                ShortcutDescription = "save the current file" 
+                ShortcutDescription = "Save the current file" 
+            },
+            new Shortcut()
+            {
+                ShortcutKeyCombination = "Ctrl + H",
+                ShortcutDescription = "Open up help window"
             },
             new Shortcut()
             {
                 ShortcutKeyCombination = "Ctrl + ->", 
-                ShortcutDescription = "make simulation faster"
+                ShortcutDescription = "Make simulation faster"
             },
             new Shortcut()
             {
                 ShortcutKeyCombination = "Ctrl + <-", 
-                ShortcutDescription = "make simulation slower"
+                ShortcutDescription = "Make simulation slower"
             },
             new Shortcut()
             { 
                 ShortcutKeyCombination = "Esc", 
-                ShortcutDescription = "unhighlight all selected objects" 
+                ShortcutDescription = "Unhighlight all selected objects" 
+            },
+            new Shortcut()
+            {
+                ShortcutKeyCombination = "Del",
+                ShortcutDescription = "Delete all highlighted objects"
             }
-        };
+        }.OrderBy(s => s.ShortcutDescription).ToList();
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
         mc:Ignorable="d"
-        Title="Help" Height="450" Width="800"
+        Title="Help" Height="600" Width="850"
         FontSize="16">
 
     <Window.Resources>
@@ -50,12 +50,17 @@
         <!--#region Component tutorials -->
         <Expander Header="Component tutorial">
             <StackPanel Orientation="Vertical">
-                <Expander Header="Packet">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="Packet is used to simulate the way a packet goes trough a network from source device to destination device."/>
-                        <MediaElement Source="Videos/PacketSending.mp4" 
+                <Expander Header="Packet" 
+                          Margin="20 0 0 0"
+                          IsExpanded="{Binding IsPacketSimulationExpanded, 
+                                       Mode=OneWayToSource}">
+                    <StackPanel Orientation="Vertical" Margin="40 10 0 15">
+                        <TextBlock Text="Packet is used to simulate the way a packet goes trough a network from source device to destination device."
+                                   Margin="0 0 0 5"/>
+                        <MediaElement x:Name="PacketSimulationVideo"
+                                      Source="Videos/PacketSending.mp4" 
                                       Stretch="None" 
-                                      LoadedBehavior="Play"/>
+                                      LoadedBehavior="Manual"/>
                     </StackPanel>
                 </Expander>
             </StackPanel>

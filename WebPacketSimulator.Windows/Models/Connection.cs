@@ -17,7 +17,7 @@ namespace WebPacketSimulator.Wpf
         public WpfRouter DestinationRouter;
         public Line ConnectionLine;
         public Line BackupConnectionLine;
-        public static List<Line> HighlightedLines = new List<Line>();
+        public static List<Line> HighlightedConnections = new List<Line>();
         public static double HighlightedConnectionLineOpacity = 0.5f;
         public static double ConnectionLineWidth = 3;
         public static double BackupConnectionLineWidth = 15;
@@ -28,7 +28,7 @@ namespace WebPacketSimulator.Wpf
         public void Delete()
         {
             Canvas canvas = MainCanvas.Instance.Canvas;
-            HighlightedLines.Remove(ConnectionLine);
+            HighlightedConnections.Remove(ConnectionLine);
             canvas.Children.Remove(ConnectionLine);
             canvas.Children.Remove(BackupConnectionLine);
             Connections.Remove(this);

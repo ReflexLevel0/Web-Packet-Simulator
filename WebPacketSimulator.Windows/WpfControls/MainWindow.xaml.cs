@@ -30,7 +30,6 @@ namespace WebPacketSimulator.Wpf
         #region Variables
         public enum Components { Select, Router, Line, Packet }
         public static Components SelectedComponent = Components.Select;
-        string currentFilePath = null;
         public static Image PacketImage = new Image()
         {
             Source = new BitmapImage(new Uri("/Images/Packet.png", UriKind.Relative)),
@@ -48,6 +47,7 @@ namespace WebPacketSimulator.Wpf
                 RouterData.UpdateRouterData(HighlightedRouter.Name, HighlightedRouter.Address); 
             } 
         }
+        public static string CurrentFilePath;
         #endregion
 
         public MainWindow()
@@ -55,90 +55,6 @@ namespace WebPacketSimulator.Wpf
             CurrentMainWindow = this;
             InitializeComponent();
             DataContext = this;
-        }
-
-        private void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            //Saving current work
-            if (WpfRouter.Routers.Count > 0)
-            {
-                switch (VisualHelpers.SaveCurrentWorkQuery())
-                {
-                    case MessageBoxResult.Cancel:
-                        return;
-                    case MessageBoxResult.Yes:
-                        SaveFileCommandBinding_Executed(null, null);
-                        break;
-                }
-            }
-
-            //Opening the new file
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = FileHandler.FileDialogFilter;
-            dialog.ShowDialog();
-            if (string.IsNullOrEmpty(dialog.FileName))
-            {
-                return;
-            }
-
-            //Deleting current data and loading data from the file
-            while (WpfRouter.Routers.Count > 0)
-            {
-                WpfRouter.Routers[0].Delete();
-            }
-            while (Connection.Connections.Count > 0)
-            {
-                Connection.Connections[0].Delete();
-            }
-            FileHandler.LoadFile(dialog.FileName);
-            currentFilePath = dialog.FileName;
-        }
-
-        private void SaveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            if (currentFilePath == null)
-            {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.Filter = FileHandler.FileDialogFilter;
-                dialog.ShowDialog();
-                currentFilePath = dialog.FileName;
-            }
-            FileHandler.SaveFile(WpfRouter.Routers, Connection.Connections, currentFilePath);
-        }
-
-        private void Window_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-            {
-                var response = MessageBox.Show("Are you sure that you want to delete the selected objects?",
-                                               "Delete query", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (response == MessageBoxResult.Yes)
-                {
-                    while (WpfRouter.HighlightedRouters.Count > 0)
-                    {
-                        WpfRouter.HighlightedRouters[0].Delete();
-                    }
-                    var highlightedConnections = (from connection in Connections
-                                                  where connection.ConnectionLine.Opacity != 1
-                                                  select connection).ToList();
-                    while (highlightedConnections.Count > 0)
-                    {
-                        highlightedConnections[0].Delete();
-                        highlightedConnections.RemoveAt(0);
-                    }
-                }
-            }
-            else if (e.Key == Key.Escape)
-            {
-                WpfRouter.HighlightedRouters.UnhighlightAllRouters();
-                Connection.HighlightedLines.UnhighlightAllLines();
-                if (MainCanvas.CurrentLine != null)
-                {
-                    MainCanvas.Instance.Canvas.Children.Remove(MainCanvas.CurrentLine);
-                    WpfRouter.LastClickedRouter = null;
-                    MainCanvas.CurrentLine = null;
-                }
-            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -151,7 +67,7 @@ namespace WebPacketSimulator.Wpf
                         e.Cancel = true;
                         return;
                     case MessageBoxResult.Yes:
-                        SaveFileCommandBinding_Executed(null, null);
+                        SaveCommand.Instance.Equals(null);
                         break;
                 }
             }

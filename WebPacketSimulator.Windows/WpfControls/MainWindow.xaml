@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        KeyUp="Window_KeyUp"
         FontSize="16">
 
     <Window.Resources>
@@ -28,12 +27,27 @@
         </Style>
     </Window.Resources>
 
-    <Window.CommandBindings>
-        <CommandBinding Command="Open" 
-                        Executed="OpenFileCommandBinding_Executed"/>
-        <CommandBinding Command="Save" 
-                        Executed="SaveFileCommandBinding_Executed"/>
-    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="H" 
+                    Modifiers="Ctrl" 
+                    Command="{x:Static local:HelpCommand.Instance}"/>
+        <KeyBinding Key="Delete"
+                    Command="{x:Static local:DeleteCommand.Instance}"/>
+        <KeyBinding Key="O"
+                    Modifiers="Ctrl"
+                    Command="{x:Static local:OpenCommand.Instance}"/>
+        <KeyBinding Key="S"
+                    Modifiers="Ctrl"
+                    Command="{x:Static local:SaveCommand.Instance}"/>
+        <KeyBinding Key="Left"
+                    Modifiers="Ctrl"
+                    Command="{x:Static local:SlowDownAnimationCommand.Instance}"/>
+        <KeyBinding Key="Right"
+                    Modifiers="Ctrl"
+                    Command="{x:Static local:SpeedUpAnimationCommand.Instance}"/>
+        <KeyBinding Key="Esc"
+                    Command="{x:Static local:UnhighlightCommand.Instance}"/>
+    </Window.InputBindings>
 
     <Grid Margin="5">
         <Grid.RowDefinitions>

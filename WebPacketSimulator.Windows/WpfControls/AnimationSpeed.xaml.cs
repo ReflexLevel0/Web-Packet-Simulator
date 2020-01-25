@@ -33,7 +33,10 @@ namespace WebPacketSimulator.Wpf
             get => (double)GetValue(SpeedProperty);
             set
             {
-                SetValue(SpeedProperty, value);
+                if (value >= 0.25 && value <= 4)
+                {
+                    SetValue(SpeedProperty, value);
+                }
             }
         }
         #endregion
@@ -47,22 +50,22 @@ namespace WebPacketSimulator.Wpf
 
         private void SlowDownAnimationButton_Click(object sender, RoutedEventArgs e)
         {
-            double newSpeed = Speed / 2;
-            if (newSpeed < 0.25)
-            {
-                return;
-            }
-            Speed = newSpeed;
+            DecreaseSpeed();
         }
 
         private void SpeedUpAnimationButton_Click(object sender, RoutedEventArgs e)
         {
-            double newSpeed = Speed * 2;
-            if (newSpeed > 4)
-            {
-                return;
-            }
-            Speed = newSpeed;
+            IncreaseSpeed();
+        }
+
+        public static void IncreaseSpeed()
+        {
+            Instance.Speed *= 2;
+        }
+
+        public static void DecreaseSpeed()
+        {
+            Instance.Speed /= 2;
         }
     }
 }

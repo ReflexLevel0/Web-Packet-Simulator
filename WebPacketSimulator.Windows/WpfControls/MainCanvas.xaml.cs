@@ -81,15 +81,16 @@ namespace WebPacketSimulator.Wpf
                     Math.Abs(location.Y - lastMouseDownLocation.Y) < 1 &&
                     isCtrlPressed == false)
                 {
-                    WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+                    WpfRouter.HighlightedRouters.UnhighlightAllRouters(false);
                     clickedRouter.HighlightRouter();
                 }
             }
             //Unhighlighting other routers and higlighting the new router
             else if (MainWindow.SelectedComponent == MainWindow.Components.Router && clickedRouter == null)
             {
-                WpfRouter.HighlightedRouters.UnhighlightAllRouters();
-                WpfRouter.CreateRouter(location).HighlightRouter();
+                WpfRouter.HighlightedRouters.UnhighlightAllRouters(false);
+                WpfRouter.CreateRouter(new Point(location.X - WpfRouter.RouterImageWidth / 2, 
+                                       location.Y - WpfRouter.RouterImageHeight / 2)).HighlightRouter();
             }
             #endregion
         }
@@ -113,7 +114,7 @@ namespace WebPacketSimulator.Wpf
                     }
                     else
                     {
-                        clickedRouter.UnhighlightRouter();
+                        clickedRouter.UnhighlightRouter(true);
                     }
                 }
                 //Highlighting the clicked router
@@ -121,7 +122,7 @@ namespace WebPacketSimulator.Wpf
                 {
                     if (clickedRouter.IsHighlighted == false)
                     {
-                        WpfRouter.HighlightedRouters.UnhighlightAllRouters();
+                        WpfRouter.HighlightedRouters.UnhighlightAllRouters(false);
                         clickedRouter.HighlightRouter();
                     }
                 }
@@ -145,10 +146,8 @@ namespace WebPacketSimulator.Wpf
                 if (newMousePosition.IsOnAnyImage(highlightedRouters) ||
                     previousMousePosition.IsOnAnyImage(highlightedRouters))
                 {
-                    var offsetAmmount = new System.Windows.Point(
-                                            newMousePosition.X - previousMousePosition.X,
-                                            newMousePosition.Y - previousMousePosition.Y
-                                        );
+                    var offsetAmmount = new Point(newMousePosition.X - previousMousePosition.X,
+                                                  newMousePosition.Y - previousMousePosition.Y);
                     WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
                 }
             }
@@ -169,8 +168,7 @@ namespace WebPacketSimulator.Wpf
                 CurrentLine.Y2 = newMousePosition.Y;
             }
 
-            previousMousePosition = new System.Windows.Point(newMousePosition.X, newMousePosition.Y);
-            Debug.WriteLine("{0} {1}", previousMousePosition.X, previousMousePosition.Y);
+            previousMousePosition = new Point(newMousePosition.X, newMousePosition.Y);
         }
     }
 }
