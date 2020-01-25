@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -128,7 +129,7 @@ namespace WebPacketSimulator.Wpf
             lastMouseDownLocation = clickPosition;
         }
 
-        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
             var newMousePosition = e.GetPosition(Canvas);
 
@@ -169,6 +170,7 @@ namespace WebPacketSimulator.Wpf
             }
 
             previousMousePosition = new System.Windows.Point(newMousePosition.X, newMousePosition.Y);
+            Debug.WriteLine("{0} {1}", previousMousePosition.X, previousMousePosition.Y);
         }
     }
 }

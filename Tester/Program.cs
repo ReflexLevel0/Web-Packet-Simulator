@@ -16,13 +16,13 @@ namespace WebPacketSimulator.Tester
             f = new Router() { Name = "F" };
             g = new Router() { Name = "G" };
 
-            Router.Routers.Add(a);
-            Router.Routers.Add(b);
-            Router.Routers.Add(c);
-            Router.Routers.Add(d);
-            Router.Routers.Add(e);
-            Router.Routers.Add(f);
-            Router.Routers.Add(g);
+            //Router.Routers.Add(a);
+            //Router.Routers.Add(b);
+            //Router.Routers.Add(c);
+            //Router.Routers.Add(d);
+            //Router.Routers.Add(e);
+            //Router.Routers.Add(f);
+            //Router.Routers.Add(g);
 
             //a.LinkedRouters.Add(b);
             //a.LinkedRouters.Add(c);
@@ -54,10 +54,10 @@ namespace WebPacketSimulator.Tester
             g.LinkedRouters.Add(d);
             g.LinkedRouters.Add(f);
 
-            foreach (var router in a.GetPathToRouter(Router.Routers, g))
-            {
-                Console.WriteLine(router.Name);
-            }
+            //foreach (var router in a.GetPathToRouter(Router.Routers, g))
+            //{
+            //    Console.WriteLine(router.Name);
+            //}
         }
     }
 }

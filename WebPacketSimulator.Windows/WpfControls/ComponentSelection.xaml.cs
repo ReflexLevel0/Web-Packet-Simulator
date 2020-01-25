@@ -24,6 +24,8 @@ namespace WebPacketSimulator.Wpf
 
         public ComponentSelection()
         {
+            ToolTipService.ShowDurationProperty.OverrideMetadata
+                (typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
             Instance = this;
             InitializeComponent();
         }

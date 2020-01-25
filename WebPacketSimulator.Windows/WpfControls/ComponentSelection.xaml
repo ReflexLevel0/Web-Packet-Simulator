@@ -15,12 +15,16 @@
             </ItemsPanelTemplate>
         </ListView.ItemsPanel>
         <local:Component ImageSource="/Images/Router.png"
-                         Text="{x:Static local:Component.RouterComponentText}"/>
+                         Text="{x:Static local:Component.RouterComponentText}"
+                         ToolTip="Click on the screen to make a new router"/>
         <local:Component ImageSource="/Images/Line.png"
-                             Text="{x:Static local:Component.LineComponentText}"/>
+                         Text="{x:Static local:Component.LineComponentText}"
+                         ToolTip="Click on two router to connect them"/>
         <local:Component ImageSource="/Images/Cursor.png"
-                             Text="{x:Static local:Component.SelectComponentText}"/>
+                         Text="{x:Static local:Component.SelectComponentText}"
+                         ToolTip="Drag your mouse across the screen while holding down&#x0a;the left mouse mutton to select multiple objects"/>
         <local:Component ImageSource="/Images/Packet.png"
-                             Text="{x:Static local:Component.PacketComponentText}"/>
+                         Text="{x:Static local:Component.PacketComponentText}"
+                         ToolTip="Click on two routers to send&#x0a;a message between them"/>
     </ListView>
 </UserControl>

@@ -7,7 +7,6 @@ C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacket
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\Component.g.cs
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainWindow.g.cs
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\App.g.cs
-C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\App.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\Component.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainWindow.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\bin\Debug\WebPacketSimulator.Wpf.exe.config
@@ -33,3 +32,5 @@ C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacket
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\ComponentSelection.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\MainCanvas.baml
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\Menu.baml
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\HelpWindow.g.cs
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\obj\Debug\WpfControls\HelpWindow.baml

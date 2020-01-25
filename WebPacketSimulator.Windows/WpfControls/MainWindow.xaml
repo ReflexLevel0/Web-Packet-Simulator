@@ -36,7 +36,7 @@
 
         <local:MenuUserControl/>
         <local:AnimationSpeed Grid.Column="1"/>
-        <local:MainCanvas Grid.Row="1" Grid.RowSpan="3"/>
+        <local:MainCanvas Grid.Row="1"/>
         <local:ComponentSelection Grid.Row="3" Grid.ColumnSpan="2"/>
         <local:PacketConsole Grid.Row="3" Grid.ColumnSpan="2"/>
         <local:MenuSelection Grid.Row="2" Grid.ColumnSpan="2"/>

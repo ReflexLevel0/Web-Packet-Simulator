@@ -163,7 +163,6 @@ namespace WebPacketSimulator.Wpf
                 newRouter.RouterAddressTextBlock.Text = newRouter.Router.Address; 
             };
             Routers.Add(newRouter);
-            newRouter.UnhighlightRouter();
             MainCanvas.Instance.Canvas.Children.Add(newRouter.RouterCanvas);
             Canvas.SetZIndex(newRouter.RouterCanvas, 1);
             return newRouter;

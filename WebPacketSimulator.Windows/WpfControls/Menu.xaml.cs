@@ -24,5 +24,10 @@ namespace WebPacketSimulator.Wpf
         {
             InitializeComponent();
         }
+
+        private void HelpMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            new HelpWindow().Show();
+        }
     }
 }

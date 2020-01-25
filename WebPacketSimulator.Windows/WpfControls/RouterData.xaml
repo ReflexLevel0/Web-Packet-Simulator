@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel x:Name="RouterDataStackPanel"
-                    Orientation="Vertical" 
-                    Visibility="{Binding RouterDataVisibility}">
+                Orientation="Vertical" 
+                Visibility="{Binding RouterDataVisibility}">
         <TextBlock Text="Name:"/>
         <TextBox Text="{Binding RouterName}" TextChanged="NameTextBox_TextChanged"/>
         <TextBlock Text="IP address:"/>

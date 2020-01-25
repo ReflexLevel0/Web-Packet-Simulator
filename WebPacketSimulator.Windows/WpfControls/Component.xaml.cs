@@ -72,8 +72,8 @@ namespace WebPacketSimulator.Wpf
         #region Static variables
         public static string RouterComponentText { get; set; } = "Router";
         public static string LineComponentText { get; set; } = "Line";
-        public static string SelectComponentText { get; set; } = "Cursor";
-        public static string PacketComponentText { get; set; } = "Message";
+        public static string SelectComponentText { get; set; } = "Select";
+        public static string PacketComponentText { get; set; } = "Packet";
         #endregion
 
         public Component()

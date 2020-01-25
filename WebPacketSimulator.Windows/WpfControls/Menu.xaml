@@ -9,19 +9,20 @@
     <Menu>
         <MenuItem Header="_File">
             <MenuItem Header="_Save" 
-                          Command="Save" 
-                          InputGestureText="Ctrl+S">
+                      Command="Save" 
+                      InputGestureText="Ctrl+S">
                 <MenuItem.Icon>
                     <Image Source="/Images/Save.png"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Header="_Open" 
-                          Command="Open" 
-                          InputGestureText="Ctrl+O">
+                      Command="Open" 
+                      InputGestureText="Ctrl+O">
                 <MenuItem.Icon>
                     <Image Source="/Images/Open.png"/>
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
+        <MenuItem Header="_Help" Click="HelpMenuItem_Click"/>
     </Menu>
 </UserControl>

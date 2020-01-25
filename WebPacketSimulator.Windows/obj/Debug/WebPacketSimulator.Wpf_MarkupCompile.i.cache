@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\App.xaml
-9-1663925582
+10-129776362
 
-201895461489
+21350910025
 16-505392970
-WpfControls\RouterData.xaml;WpfControls\PacketConsole.xaml;WpfControls\MenuSelection.xaml;WpfControls\ComponentSelection.xaml;WpfControls\MainCanvas.xaml;WpfControls\AnimationSpeed.xaml;WpfControls\Menu.xaml;WpfControls\Component.xaml;WpfControls\MainWindow.xaml;
+WpfControls\HelpWindow.xaml;WpfControls\RouterData.xaml;WpfControls\PacketConsole.xaml;WpfControls\MenuSelection.xaml;WpfControls\ComponentSelection.xaml;WpfControls\MainCanvas.xaml;WpfControls\AnimationSpeed.xaml;WpfControls\Menu.xaml;WpfControls\Component.xaml;WpfControls\MainWindow.xaml;
 
 False
 
