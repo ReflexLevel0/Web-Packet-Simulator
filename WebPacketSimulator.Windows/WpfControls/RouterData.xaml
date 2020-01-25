@@ -9,9 +9,9 @@
     <StackPanel x:Name="RouterDataStackPanel"
                 Orientation="Vertical" 
                 Visibility="{Binding RouterDataVisibility}">
-        <TextBlock Text="Name:"/>
+        <TextBlock Text="Name:" Margin="0 5 0 0"/>
         <TextBox Text="{Binding RouterName}" TextChanged="NameTextBox_TextChanged"/>
-        <TextBlock Text="IP address:"/>
+        <TextBlock Text="IP address:" Margin="0 5 0 0"/>
         <TextBox Text="{Binding RouterAddress}" TextChanged="AddressTextBox_TextChanged"/>
     </StackPanel>
 </UserControl>

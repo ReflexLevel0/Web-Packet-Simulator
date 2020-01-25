@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +21,15 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class HelpWindow : Window
     {
+        public ObservableCollection<Shortcut> Shortcuts { get; set; } = new ObservableCollection<Shortcut>();
         public HelpWindow()
         {
+            foreach (var shortcut in Shortcut.Shortcuts)
+            {
+                Shortcuts.Add(shortcut);
+            }
             InitializeComponent();
+            DataContext = this;
         }
     }
 }

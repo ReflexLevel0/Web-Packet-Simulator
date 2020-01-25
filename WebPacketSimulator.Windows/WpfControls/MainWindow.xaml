@@ -6,12 +6,25 @@
         xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        KeyUp="Window_KeyUp">
+        KeyUp="Window_KeyUp"
+        FontSize="16">
 
     <Window.Resources>
         <Style TargetType="local:Component">
             <Setter Property="ImageWidth" Value="{x:Static local:WpfRouter.RouterImageWidth}"/>
             <Setter Property="ImageHeight" Value="{x:Static local:WpfRouter.RouterImageHeight}"/>
+        </Style>
+        <Style TargetType="ToolTip">
+            <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource 
+                                                        Mode=FindAncestor, 
+                                                        AncestorType=local:MainWindow},
+                                                        Path=FontSize}"/>
+        </Style>
+        <Style TargetType="local:Menu">
+            <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource 
+                                                        Mode=FindAncestor, 
+                                                        AncestorType=local:MainWindow},
+                                                        Path=FontSize}"/>
         </Style>
     </Window.Resources>
 
@@ -22,7 +35,7 @@
                         Executed="SaveFileCommandBinding_Executed"/>
     </Window.CommandBindings>
 
-    <Grid>
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -32,14 +45,15 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
-        <local:MenuUserControl/>
-        <local:AnimationSpeed Grid.Column="1"/>
+        <local:Menu/>
+        <local:AnimationSpeed Grid.Column="1" Grid.ColumnSpan="2" Margin="5 0 0 0"/>
         <local:MainCanvas Grid.Row="1"/>
-        <local:ComponentSelection Grid.Row="3" Grid.ColumnSpan="2"/>
-        <local:PacketConsole Grid.Row="3" Grid.ColumnSpan="2"/>
-        <local:MenuSelection Grid.Row="2" Grid.ColumnSpan="2"/>
-        <local:RouterData Grid.Row="1" Grid.Column="1"/>
+        <local:ComponentSelection Grid.Row="3" Grid.ColumnSpan="3"/>
+        <local:PacketConsole Grid.Row="3" Grid.ColumnSpan="3"/>
+        <local:MenuSelection Grid.Row="2" Grid.ColumnSpan="3"/>
+        <local:RouterData Grid.Row="1" Grid.Column="2"/>
     </Grid>
 </Window>

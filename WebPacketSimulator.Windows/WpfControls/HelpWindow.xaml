@@ -5,15 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebPacketSimulator.Wpf"
         mc:Ignorable="d"
-        Title="Help" Height="450" Width="800">
+        Title="Help" Height="450" Width="800"
+        FontSize="16">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type DataGridCell}">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{x:Null}"/>
+                    <Setter Property="BorderBrush" Value="{x:Null}"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <StackPanel Orientation="Vertical">
+        <!--#region Shortcuts -->
         <Expander Header="Shortcuts">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Ctrl+O = open a file"/>
-                <TextBlock Text="Ctrl+S = save the current file"/>
-                <TextBlock Text="Esc = unhighlight all selected objects"/>
-            </StackPanel>
+            <DataGrid ItemsSource="{Binding Shortcuts}" 
+                      AutoGenerateColumns="False" 
+                      CanUserReorderColumns="False" 
+                      CanUserDeleteRows="False" 
+                      CanUserAddRows="False"
+                      CanUserResizeColumns="False"
+                      CanUserResizeRows="False"
+                      IsReadOnly="True"
+                      HorizontalAlignment="Left"
+                      Width="400"
+                      Margin="20 10 0 15" 
+                      HeadersVisibility="Column">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Key combination" 
+                                        Width="135"
+                                        Binding="{Binding ShortcutKeyCombination}"/>
+                    <DataGridTextColumn Width="*" 
+                                        Header="Description" 
+                                        Binding="{Binding ShortcutDescription}"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Expander>
+        <!--#endregion-->
+
+        <!--#region Component tutorials -->
         <Expander Header="Component tutorial">
             <StackPanel Orientation="Vertical">
                 <Expander Header="Packet">
@@ -26,5 +60,6 @@
                 </Expander>
             </StackPanel>
         </Expander>
+        <!--#endregion-->
     </StackPanel>
 </Window>

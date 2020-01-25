@@ -9,9 +9,11 @@
     <StackPanel Orientation="Horizontal">
         <Button Content="Components" 
                 IsEnabled="{Binding IsComponentMenuEnabled}"
-                Click="ChangeMenuToComponents_Click"/>
+                Click="ChangeMenuToComponents_Click"
+                Style="{StaticResource RoundedButton}"/>
         <Button Content="Packet console" 
                 IsEnabled="{Binding IsPacketConsoleEnabled}"
-                Click="ChangeMenuToPacketConsole_Click"/>
+                Click="ChangeMenuToPacketConsole_Click"
+                Style="{StaticResource RoundedButton}"/>
     </StackPanel>
 </UserControl>

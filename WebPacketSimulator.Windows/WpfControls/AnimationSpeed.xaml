@@ -7,8 +7,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel Orientation="Horizontal">
-        <Button Content="&lt;" Click="SlowDownAnimationButton_Click"/>
-        <TextBlock Text="{Binding Speed, StringFormat={}{0:F2}x}"/>
-        <Button Content="&gt;" Click="SpeedUpAnimationButton_Click"/>
+        <TextBlock Text="Simulation speed:"/>
+        <Button Content="&lt;" 
+                Click="SlowDownAnimationButton_Click" 
+                Margin="5 0 0 0"
+                Padding="2.5 0 2.5 2"/>
+        <TextBlock Text="{Binding Speed, StringFormat={}{0:F2}x}" 
+                   VerticalAlignment="Center"
+                   Margin="5 0 5 0"/>
+        <Button Content="&gt;"
+                Click="SpeedUpAnimationButton_Click"
+                Padding="2.5 0 2.5 2"/>
     </StackPanel>
 </UserControl>

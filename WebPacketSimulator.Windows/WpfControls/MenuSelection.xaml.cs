@@ -57,6 +57,7 @@ namespace WebPacketSimulator.Wpf
         {
             InitializeComponent();
             ChangeMenu(Menus.Components);
+            DataContext = this;
         }
 
         private void ChangeMenuToComponents_Click(object sender, RoutedEventArgs e)

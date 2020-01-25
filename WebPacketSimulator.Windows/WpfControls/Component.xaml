@@ -9,7 +9,8 @@
     <StackPanel>
         <Image Source="{Binding ImageSource}" 
                Width="{Binding ImageWidth}" 
-               Height="{Binding ImageHeight}"/>
-        <TextBlock Text="{Binding Text}"/>
+               Height="{Binding ImageHeight}"
+               HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding Text}" HorizontalAlignment="Center"/>
     </StackPanel>
 </UserControl>

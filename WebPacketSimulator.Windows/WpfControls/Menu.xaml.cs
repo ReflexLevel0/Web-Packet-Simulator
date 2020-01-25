@@ -18,9 +18,9 @@ namespace WebPacketSimulator.Wpf
     /// <summary>
     /// Interaction logic for MenuUserControl.xaml
     /// </summary>
-    public partial class MenuUserControl : UserControl
+    public partial class Menu : UserControl
     {
-        public MenuUserControl()
+        public Menu()
         {
             InitializeComponent();
         }
