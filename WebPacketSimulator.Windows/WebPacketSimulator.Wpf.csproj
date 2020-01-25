@@ -56,27 +56,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="WpfControls\RouterDataUserControl.xaml.cs">
-      <DependentUpon>RouterDataUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\RouterData.xaml.cs">
+      <DependentUpon>RouterData.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WpfControls\PacketConsoleUserControl.xaml.cs">
-      <DependentUpon>PacketConsoleUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\PacketConsole.xaml.cs">
+      <DependentUpon>PacketConsole.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WpfControls\MenuSelectionUserControl.xaml.cs">
-      <DependentUpon>MenuSelectionUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\MenuSelection.xaml.cs">
+      <DependentUpon>MenuSelection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WpfControls\ComponentSelectionUserControl.xaml.cs">
-      <DependentUpon>ComponentSelectionUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\ComponentSelection.xaml.cs">
+      <DependentUpon>ComponentSelection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WpfControls\MainCanvasUserControl.xaml.cs">
-      <DependentUpon>MainCanvasUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\MainCanvas.xaml.cs">
+      <DependentUpon>MainCanvas.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WpfControls\AnimationSpeedUserControl.xaml.cs">
-      <DependentUpon>AnimationSpeedUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\AnimationSpeed.xaml.cs">
+      <DependentUpon>AnimationSpeed.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileHandler.cs" />
-    <Compile Include="WpfControls\MenuUserControl.xaml.cs">
-      <DependentUpon>MenuUserControl.xaml</DependentUpon>
+    <Compile Include="WpfControls\Menu.xaml.cs">
+      <DependentUpon>Menu.xaml</DependentUpon>
     </Compile>
     <Compile Include="WpfControls\Component.xaml.cs">
       <DependentUpon>Component.xaml</DependentUpon>
@@ -85,31 +85,31 @@
     <Compile Include="Converters\LineMarginToRouterCenter.cs" />
     <Compile Include="VisualHelpers.cs" />
     <Compile Include="WpfRouter.cs" />
-    <Page Include="WpfControls\RouterDataUserControl.xaml">
+    <Page Include="WpfControls\RouterData.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WpfControls\PacketConsoleUserControl.xaml">
+    <Page Include="WpfControls\PacketConsole.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WpfControls\MenuSelectionUserControl.xaml">
+    <Page Include="WpfControls\MenuSelection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WpfControls\ComponentSelectionUserControl.xaml">
+    <Page Include="WpfControls\ComponentSelection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WpfControls\MainCanvasUserControl.xaml">
+    <Page Include="WpfControls\MainCanvas.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WpfControls\AnimationSpeedUserControl.xaml">
+    <Page Include="WpfControls\AnimationSpeed.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WpfControls\MenuUserControl.xaml">
+    <Page Include="WpfControls\Menu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

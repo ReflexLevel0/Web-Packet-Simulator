@@ -38,7 +38,7 @@ namespace WebPacketSimulator.Wpf {
     /// <summary>
     /// ComponentSelectionUserControl
     /// </summary>
-    public partial class ComponentSelectionUserControl : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
+    public partial class ComponentSelection : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
         
         private bool _contentLoaded;
         

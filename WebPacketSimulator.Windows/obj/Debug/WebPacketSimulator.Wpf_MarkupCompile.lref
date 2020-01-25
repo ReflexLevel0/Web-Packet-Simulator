@@ -1,12 +1,12 @@
 ﻿
 FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\App.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\RouterDataUserControl.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\PacketConsoleUserControl.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\MenuSelectionUserControl.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\ComponentSelectionUserControl.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\MainCanvasUserControl.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\AnimationSpeedUserControl.xaml;;
-FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\MenuUserControl.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\RouterData.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\PacketConsole.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\MenuSelection.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\ComponentSelection.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\MainCanvas.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\AnimationSpeed.xaml;;
+FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\Menu.xaml;;
 FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\Component.xaml;;
 FC:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\WebPacketSimulator.Windows\WpfControls\MainWindow.xaml;;
 

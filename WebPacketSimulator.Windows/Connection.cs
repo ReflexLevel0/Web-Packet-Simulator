@@ -27,7 +27,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void Delete()
         {
-            Canvas canvas = MainCanvasUserControl.MainCanvasUC.MainCanvas;
+            Canvas canvas = MainCanvas.Instance.Canvas;
             HighlightedLines.Remove(ConnectionLine);
             canvas.Children.Remove(ConnectionLine);
             canvas.Children.Remove(BackupConnectionLine);

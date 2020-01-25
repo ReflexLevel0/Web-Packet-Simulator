@@ -38,7 +38,7 @@ namespace WebPacketSimulator.Wpf {
     /// <summary>
     /// AnimationSpeedUserControl
     /// </summary>
-    public partial class AnimationSpeedUserControl : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
+    public partial class AnimationSpeed : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
         
         private bool _contentLoaded;
         

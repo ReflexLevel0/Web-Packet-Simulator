@@ -38,7 +38,7 @@ namespace WebPacketSimulator.Wpf {
     /// <summary>
     /// MenuSelectionUserControl
     /// </summary>
-    public partial class MenuSelectionUserControl : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
+    public partial class MenuSelection : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
         
         private bool _contentLoaded;
         

@@ -38,24 +38,16 @@ namespace WebPacketSimulator.Wpf
             Height = 24
         };
         public static MainWindow CurrentMainWindow;
-
-        #region Highlighted router
-        public EventHandler HighlightedRouterNameChanged;
-        public EventHandler HighlightedRouterAddressChanged;
-
-        public static readonly DependencyProperty HighlightedRouterProperty =
-            DependencyProperty.Register(nameof(HighlightedRouter), typeof(Router), typeof(MainWindow));
-        public Router HighlightedRouter
-        {
-            get => (Router)GetValue(HighlightedRouterProperty);
-            set
-            {
-                SetValue(HighlightedRouterProperty, value);
-                HighlightedRouter.AddressChanged = HighlightedRouterAddressChanged;
-                HighlightedRouter.NameChanged = HighlightedRouterNameChanged;
-            }
+        Router highlightedRouter;
+        public Router HighlightedRouter 
+        { 
+            get => highlightedRouter; 
+            set 
+            { 
+                highlightedRouter = value; 
+                RouterData.UpdateRouterData(HighlightedRouter.Name, HighlightedRouter.Address); 
+            } 
         }
-        #endregion
         #endregion
 
         public MainWindow()
@@ -140,11 +132,11 @@ namespace WebPacketSimulator.Wpf
             {
                 WpfRouter.HighlightedRouters.UnhighlightAllRouters();
                 Connection.HighlightedLines.UnhighlightAllLines();
-                if (MainCanvasUserControl.CurrentLine != null)
+                if (MainCanvas.CurrentLine != null)
                 {
-                    MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(MainCanvasUserControl.CurrentLine);
+                    MainCanvas.Instance.Canvas.Children.Remove(MainCanvas.CurrentLine);
                     WpfRouter.LastClickedRouter = null;
-                    MainCanvasUserControl.CurrentLine = null;
+                    MainCanvas.CurrentLine = null;
                 }
             }
         }
@@ -159,7 +151,7 @@ namespace WebPacketSimulator.Wpf
                         e.Cancel = true;
                         return;
                     case MessageBoxResult.Yes:
-                        SaveFileCommandBinding_Executed(null,null);
+                        SaveFileCommandBinding_Executed(null, null);
                         break;
                 }
             }

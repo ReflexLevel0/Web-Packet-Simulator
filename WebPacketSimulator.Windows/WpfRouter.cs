@@ -83,8 +83,8 @@ namespace WebPacketSimulator.Wpf
             routerA.Router.LinkedRouters.Add(routerB.Router);
             routerB.Router.LinkedRouters.Add(routerA.Router);
             Connections.Add(connection);
-            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(connection.ConnectionLine);
-            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(connection.BackupConnectionLine);
+            MainCanvas.Instance.Canvas.Children.Add(connection.ConnectionLine);
+            MainCanvas.Instance.Canvas.Children.Add(connection.BackupConnectionLine);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace WebPacketSimulator.Wpf
                                        select connection).ToList();
             foreach (var _connection in connectionsToRemove)
             {
-                MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(_connection.ConnectionLine);
+                MainCanvas.Instance.Canvas.Children.Remove(_connection.ConnectionLine);
                 Connections.Remove(_connection);
             }
         }
@@ -126,7 +126,7 @@ namespace WebPacketSimulator.Wpf
         }
 
         /// <summary>
-        /// This function creates a router control for this router
+        /// This function creates a router with the given parameter
         /// </summary>
         /// <param name="address"> Router's IP address </param>
         /// <param name="location"> Router's location on canvas </param>
@@ -147,14 +147,24 @@ namespace WebPacketSimulator.Wpf
                     HorizontalAlignment = HorizontalAlignment.Center
                 }
             };
+            newRouter.RouterNameTextBlock.Text = newRouter.Router.Name;
+            newRouter.RouterAddressTextBlock.Text = newRouter.Router.Address;
             newRouter.RouterCanvas.Margin = new Thickness(imageMargin.X, imageMargin.Y, 0, 0);
             newRouter.RouterCanvas.Children.Add(newRouter.RouterStackPanel);
             newRouter.RouterStackPanel.Children.Add(newRouter.RouterImage);
             newRouter.RouterStackPanel.Children.Add(newRouter.RouterNameTextBlock);
             newRouter.RouterStackPanel.Children.Add(newRouter.RouterAddressTextBlock);
-            WpfRouter.Routers.Add(newRouter);
+            newRouter.Router.NameChanged += delegate 
+            { 
+                newRouter.RouterNameTextBlock.Text = newRouter.Router.Name; 
+            };
+            newRouter.Router.AddressChanged += delegate 
+            { 
+                newRouter.RouterAddressTextBlock.Text = newRouter.Router.Address; 
+            };
+            Routers.Add(newRouter);
             newRouter.UnhighlightRouter();
-            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Add(newRouter.RouterCanvas);
+            MainCanvas.Instance.Canvas.Children.Add(newRouter.RouterCanvas);
             Canvas.SetZIndex(newRouter.RouterCanvas, 1);
             return newRouter;
         }
@@ -208,7 +218,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void Delete()
         {
-            MainCanvasUserControl.MainCanvasUC.MainCanvas.Children.Remove(RouterCanvas);
+            MainCanvas.Instance.Canvas.Children.Remove(RouterCanvas);
             this.UnhighlightRouter();
             Routers.Remove(this);
             var connections = (from connection in Connections

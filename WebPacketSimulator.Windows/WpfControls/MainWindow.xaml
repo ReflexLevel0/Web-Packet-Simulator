@@ -35,11 +35,11 @@
         </Grid.ColumnDefinitions>
 
         <local:MenuUserControl/>
-        <local:AnimationSpeedUserControl Grid.Column="1"/>
-        <local:MainCanvasUserControl Grid.Row="1" Grid.RowSpan="3"/>
-        <local:ComponentSelectionUserControl Grid.Row="3" Grid.ColumnSpan="2"/>
-        <local:PacketConsoleUserControl Grid.Row="3" Grid.ColumnSpan="2"/>
-        <local:MenuSelectionUserControl Grid.Row="2" Grid.ColumnSpan="2"/>
-        <local:RouterDataUserControl Grid.Row="1" Grid.Column="1"/>
+        <local:AnimationSpeed Grid.Column="1"/>
+        <local:MainCanvas Grid.Row="1" Grid.RowSpan="3"/>
+        <local:ComponentSelection Grid.Row="3" Grid.ColumnSpan="2"/>
+        <local:PacketConsole Grid.Row="3" Grid.ColumnSpan="2"/>
+        <local:MenuSelection Grid.Row="2" Grid.ColumnSpan="2"/>
+        <local:RouterData Grid.Row="1" Grid.Column="1"/>
     </Grid>
 </Window>

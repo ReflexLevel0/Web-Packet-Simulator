@@ -38,7 +38,7 @@ namespace WebPacketSimulator.Wpf {
     /// <summary>
     /// PacketConsoleUserControl
     /// </summary>
-    public partial class PacketConsoleUserControl : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
+    public partial class PacketConsole : System.Windows.Controls.UserControl, System.Windows.Markup.IComponentConnector {
         
         
         #line 10 "..\..\..\WpfControls\PacketConsoleUserControl.xaml"
