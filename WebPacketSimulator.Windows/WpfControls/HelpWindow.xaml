@@ -18,11 +18,16 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="{x:Type MediaElement}">
+            <Setter Property="LoadedBehavior" Value="Manual"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Stretch" Value="None"/>
+        </Style>
     </Window.Resources>
 
     <StackPanel Orientation="Vertical">
         <!--#region Shortcuts -->
-        <Expander Header="Shortcuts">
+        <Expander Header="Shortcuts" Margin="0 0 0 5">
             <DataGrid ItemsSource="{Binding Shortcuts}" 
                       AutoGenerateColumns="False" 
                       CanUserReorderColumns="False" 
@@ -33,7 +38,7 @@
                       IsReadOnly="True"
                       HorizontalAlignment="Left"
                       Width="400"
-                      Margin="20 10 0 15" 
+                      Margin="20 10 0 0" 
                       HeadersVisibility="Column">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Key combination" 
@@ -48,21 +53,53 @@
         <!--#endregion-->
 
         <!--#region Component tutorials -->
-        <Expander Header="Component tutorial">
+        <Expander Header="Component tutorial" Margin="0 0 0 5">
             <StackPanel Orientation="Vertical">
-                <Expander Header="Packet" 
-                          Margin="20 0 0 0"
-                          IsExpanded="{Binding IsPacketSimulationExpanded, 
+                <!--#region Creating router tutorial -->
+                <Expander Header="Create router"
+                          Margin="20 5 0 0"
+                          IsExpanded="{Binding IsRouterTutorialExpanded,
                                        Mode=OneWayToSource}">
-                    <StackPanel Orientation="Vertical" Margin="40 10 0 15">
-                        <TextBlock Text="Packet is used to simulate the way a packet goes trough a network from source device to destination device."
+                    <StackPanel Orientation="Vertical" Margin="40 0 0 0">
+                        <TextBlock Text="Router is the main component of this program. Packet can be sent from a router to another if they are connected."/>
+                        <TextBlock Text="Usage: select the router component and click on empty space on the canvas."
                                    Margin="0 0 0 5"/>
-                        <MediaElement x:Name="PacketSimulationVideo"
-                                      Source="Videos/PacketSending.mp4" 
-                                      Stretch="None" 
-                                      LoadedBehavior="Manual"/>
+                        <MediaElement x:Name="RouterCreationVideo"
+                                      Source="Videos/CreateRouter.mp4"
+                                      MediaEnded="Video_MediaEnded"/>
                     </StackPanel>
                 </Expander>
+                <!--#endregion-->
+                <!--#region Connecting routers tutorial -->
+                <Expander Header="Connecting routers" 
+                          Margin="20 5 0 0"
+                          IsExpanded="{Binding IsConnectionTutorialExpanded}">
+                    <StackPanel Orientation="Vertical" Margin="40 0 0 0">
+                        <TextBlock Text="Line is used to connect the routers so that a packet can travel between them."/>
+                        <TextBlock Text="Usage: select the line component and click on two routers to connect them." 
+                                   Margin="0 0 0 5"/>
+                        <MediaElement x:Name="ConnectRoutersTutorialVideo"
+                                      Source="Videos/ConnectRouters.mp4"
+                                      MediaEnded="Video_MediaEnded"/>
+                    </StackPanel>
+                </Expander>
+                <!--#endregion-->
+                <!--#region Packet tutorial -->
+                <Expander Header="Packet" 
+                          Margin="20 5 0 0"
+                          IsExpanded="{Binding IsPacketTutorialExpanded, 
+                                       Mode=OneWayToSource}">
+                    <StackPanel Orientation="Vertical" Margin="40 0 0 0">
+                        <TextBlock Text="Packet is used to simulate the way a packet goes trough a network from source device to destination device."/>
+                        <TextBlock Text="Usage: select the packet component and click on two routers."
+                                   Margin="0 0 0 5"/>
+                        <MediaElement x:Name="PacketTutorialVideo"
+                                      Source="Videos/SendPacket.mp4"
+                                      MediaEnded="Video_MediaEnded">
+                        </MediaElement>
+                    </StackPanel>
+                </Expander>
+                <!--#endregion-->
             </StackPanel>
         </Expander>
         <!--#endregion-->

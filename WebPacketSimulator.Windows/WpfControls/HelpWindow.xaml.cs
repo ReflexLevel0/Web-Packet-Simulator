@@ -21,28 +21,70 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class HelpWindow : Window
     {
-        MediaElement packetSimulation;
         public ObservableCollection<Shortcut> Shortcuts { get; set; } = new ObservableCollection<Shortcut>();
-        public static readonly DependencyProperty IsPacketSimulationExpandedProperty =
-            DependencyProperty.Register(nameof(IsPacketSimulationExpanded), 
-                                        typeof(bool), typeof(HelpWindow), 
-                                        new PropertyMetadata(false, OnIsPacketSimulationExpandedPropertyChanged));
-        public bool IsPacketSimulationExpanded
+
+        #region Video variables
+        public static readonly DependencyProperty IsRouterTutorialExpandedProperty =
+            DependencyProperty.Register(nameof(IsRouterTutorialExpanded), typeof(bool), typeof(HelpWindow),
+                                        new PropertyMetadata(false, OnIsRouterSimulationEnabledChanged));
+        bool IsRouterTutorialExpanded
         {
-            get => (bool)GetValue(IsPacketSimulationExpandedProperty);
+            get => (bool)GetValue(IsRouterTutorialExpandedProperty);
             set
             {
-                SetValue(IsPacketSimulationExpandedProperty, value);
-                if (IsPacketSimulationExpanded)
+                SetValue(IsRouterTutorialExpandedProperty, value);
+                if (value)
                 {
-                    packetSimulation.Play();
+                    RouterCreationVideo.Play();
                 }
                 else
                 {
-                    packetSimulation.Stop();
+                    RouterCreationVideo.Stop();
                 }
             }
         }
+
+        public static readonly DependencyProperty IsConnectionTutorialExpandedProperty =
+            DependencyProperty.Register(nameof(IsConnectionTutorialExpanded), typeof(bool), typeof(HelpWindow),
+                                        new PropertyMetadata(false, OnIsConnectionTutorialExpandedChanged));
+        public bool IsConnectionTutorialExpanded
+        {
+            get => (bool)GetValue(IsConnectionTutorialExpandedProperty);
+            set
+            {
+                SetValue(IsConnectionTutorialExpandedProperty, value);
+                if (value)
+                {
+                    ConnectRoutersTutorialVideo.Play();
+                }
+                else
+                {
+                    ConnectRoutersTutorialVideo.Stop();
+                }
+            }
+        }
+
+        public static readonly DependencyProperty IsPacketTutorialExpandedProperty =
+            DependencyProperty.Register(nameof(IsPacketTutorialExpanded), 
+                                        typeof(bool), typeof(HelpWindow), 
+                                        new PropertyMetadata(false, OnIsPacketSimulationExpandedPropertyChanged));
+        public bool IsPacketTutorialExpanded
+        {
+            get => (bool)GetValue(IsPacketTutorialExpandedProperty);
+            set
+            {
+                SetValue(IsPacketTutorialExpandedProperty, value);
+                if (value)
+                {
+                    PacketTutorialVideo.Play();
+                }
+                else
+                {
+                    PacketTutorialVideo.Stop();
+                }
+            }
+        }
+        #endregion
 
         public HelpWindow()
         {
@@ -51,13 +93,31 @@ namespace WebPacketSimulator.Wpf
                 Shortcuts.Add(shortcut);
             }
             InitializeComponent();
-            packetSimulation = PacketSimulationVideo;
             DataContext = this;
         }
 
+        #region Video variable changed callbacks
         static void OnIsPacketSimulationExpandedPropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            (o as HelpWindow).IsPacketSimulationExpanded = (bool)e.NewValue;
+            (o as HelpWindow).IsPacketTutorialExpanded = (bool)e.NewValue;
+        }
+
+        static void OnIsConnectionTutorialExpandedChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            (o as HelpWindow).IsConnectionTutorialExpanded = (bool)e.NewValue;
+        }
+
+        static void OnIsRouterSimulationEnabledChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            (o as HelpWindow).IsRouterTutorialExpanded = (bool)e.NewValue;
+        }
+        #endregion
+
+        private void Video_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            var video = sender as MediaElement;
+            video.Stop();
+            video.Play();
         }
     }
 }
