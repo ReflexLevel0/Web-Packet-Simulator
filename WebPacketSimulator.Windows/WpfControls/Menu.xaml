@@ -27,7 +27,9 @@
                 </MenuItem.Icon>
             </MenuItem>
         </MenuItem>
-        <MenuItem Header="_Delete" IsEnabled="{Binding DeleteMenuItemIsEnabled}"/>
+        <MenuItem Header="_Delete"
+                  IsEnabled="{Binding DeleteMenuItemIsEnabled}"
+                  Command="{x:Static local:DeleteCommand.Instance}"/>
         <MenuItem Header="_Help" Click="HelpMenuItem_Click"/>
     </Menu>
 </UserControl>

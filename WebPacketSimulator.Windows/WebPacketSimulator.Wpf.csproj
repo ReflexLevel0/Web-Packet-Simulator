@@ -56,8 +56,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoolEventArgs.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\DeleteCommand.cs" />
+    <Compile Include="Models\LineMarginToRouterConverterParameter.cs" />
     <Compile Include="Models\Shortcut.cs" />
     <Compile Include="Commands\OpenCommand.cs" />
     <Compile Include="Commands\SaveCommand.cs" />
@@ -92,7 +94,6 @@
     <Compile Include="WpfControls\Component.xaml.cs">
       <DependentUpon>Component.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\BackupLineMarginToRouterConverter.cs" />
     <Compile Include="Converters\LineMarginToRouterCenter.cs" />
     <Compile Include="Models\VisualHelpers.cs" />
     <Compile Include="Models\WpfRouter.cs" />

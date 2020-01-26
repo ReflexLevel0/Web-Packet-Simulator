@@ -75,15 +75,39 @@ namespace WebPacketSimulator.Wpf
             };
             for (int i = 0; i < 2; i++)
             {
-                var source = (i == 0) ? routerA.RouterCanvas : routerB.RouterCanvas;
-                var binding = new Binding("Margin") { Source = source, Converter = new LineMarginToRouterCenter(), ConverterParameter = true };
+                var currentRouter = (i == 0) ? routerA : routerB;
+                var binding = new Binding("Margin") 
+                { 
+                    Source = currentRouter.RouterCanvas, 
+                    Converter = new LineMarginToRouterCenter(), 
+                    ConverterParameter = new LineMarginToRouterConverterParameter() 
+                    { 
+                        Left = true, 
+                        Router = currentRouter
+                    } 
+                };
                 connection.ConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
-                binding = new Binding("Margin") { Source = source, Converter = new LineMarginToRouterCenter(), ConverterParameter = false };
-                connection.ConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
-                binding = new Binding("Margin") { Source = source, Converter = new BackupLineMarginToRouterConverter(), ConverterParameter = true };
                 connection.BackupConnectionLine.SetBinding((i == 0) ? Line.X1Property : Line.X2Property, binding);
-                binding = new Binding("Margin") { Source = source, Converter = new BackupLineMarginToRouterConverter(), ConverterParameter = false };
+                binding = new Binding("Margin") 
+                { 
+                    Source = currentRouter.RouterCanvas, 
+                    Converter = new LineMarginToRouterCenter(), 
+                    ConverterParameter = new LineMarginToRouterConverterParameter() 
+                    { 
+                        Left = false,
+                        Router = currentRouter
+                    } 
+                };
+                connection.ConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
                 connection.BackupConnectionLine.SetBinding((i == 0) ? Line.Y1Property : Line.Y2Property, binding);
+                currentRouter.Router.NameChanged += delegate
+                {
+                    ManuallyUpdateMargin(currentRouter);
+                };
+                currentRouter.Router.AddressChanged += delegate
+                {
+                    ManuallyUpdateMargin(currentRouter);
+                };
             }
             connection.ConnectionLine.Stroke = System.Windows.Media.Brushes.Black;
             connection.ConnectionLine.StrokeThickness = ConnectionLineWidth;
@@ -249,7 +273,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void ConnectionLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        static void ConnectionLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Debug.WriteLine("Y");
 
@@ -278,6 +302,19 @@ namespace WebPacketSimulator.Wpf
                 connection.ConnectionLine.HighlightLine();
             }
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// This function manually updates margin property of the router (this is used so that locations of connection lines update after route's data changes (otherwise if text was too large, router's image would move to center of the stack panel and connection would stay on the same location))
+        /// </summary>
+        /// <param name="router"></param>
+        static void ManuallyUpdateMargin(WpfRouter router)
+        {
+            var margin = router.RouterCanvas.Margin;
+            var newMargin = new Thickness(margin.Left, margin.Top, margin.Right, margin.Bottom - 1);
+            router.RouterCanvas.Margin = newMargin;
+            newMargin.Bottom += 1;
+            router.RouterCanvas.Margin = newMargin;
         }
     }
 }

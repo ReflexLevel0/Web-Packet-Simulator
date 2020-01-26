@@ -23,7 +23,7 @@ namespace WebPacketSimulator.Wpf
     {
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
         bool deleteMenuItemIsEnabled;
-        bool DeleteMenuItemIsEnabled
+        public bool DeleteMenuItemIsEnabled
         {
             get => deleteMenuItemIsEnabled;
             set
@@ -35,14 +35,15 @@ namespace WebPacketSimulator.Wpf
                 }
             }
         }
-        
+
         public Menu()
         {
-            WpfRouter.HighlightedRoutersCollectionChanged += delegate
-            {
-                DeleteMenuItemIsEnabled = (WpfRouter.Routers.Count == 0) ? false : true;
-            };
             InitializeComponent();
+            DataContext = this;
+            DeleteCommand.Instance.CanExecuteChanged += (o,e) =>
+            {
+                DeleteMenuItemIsEnabled = (e as BoolEventArgs).Result;
+            };
         }
 
         private void HelpMenuItem_Click(object sender, RoutedEventArgs e)

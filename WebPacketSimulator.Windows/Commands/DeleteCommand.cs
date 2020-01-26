@@ -11,8 +11,24 @@ namespace WebPacketSimulator.Wpf
     public class DeleteCommand : ICommand
     {
         public static DeleteCommand Instance = new DeleteCommand();
-        public event EventHandler CanExecuteChanged = delegate { };
-        public bool CanExecute(object parameter) => true;
+        public event EventHandler CanExecuteChanged;
+        public DeleteCommand()
+        {
+            WpfRouter.HighlightedRoutersCollectionChanged += delegate
+            {
+                CanExecuteChanged_Invoke();
+            };
+            Connection.HighlightedConnectionsChanged += delegate
+            {
+                CanExecuteChanged_Invoke();
+            };
+        }
+        public bool CanExecute(object parameter) => 
+            WpfRouter.HighlightedRouters.Count != 0 || Connection.HighlightedConnections.Count != 0;
+        void CanExecuteChanged_Invoke()
+        {
+            CanExecuteChanged.Invoke(this, new BoolEventArgs(CanExecute(null)));
+        }
         public void Execute(object parameter)
         {
             var response = MessageBox.Show("Are you sure that you want to delete the selected objects?",
