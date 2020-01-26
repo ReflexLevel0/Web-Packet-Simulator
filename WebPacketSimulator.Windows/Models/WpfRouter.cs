@@ -269,6 +269,18 @@ namespace WebPacketSimulator.Wpf
         }
 
         /// <summary>
+        /// This function deletes all router in a list
+        /// </summary>
+        /// <param name="routers"> Routers to be deleted </param>
+        public static void DeleteAll(IEnumerable<WpfRouter> routers)
+        {
+            while(routers.Count() > 0)
+            {
+                routers.First().Delete();
+            }
+        }
+
+        /// <summary>
         /// This function gets called when the connection gets clicked
         /// </summary>
         /// <param name="sender"></param>

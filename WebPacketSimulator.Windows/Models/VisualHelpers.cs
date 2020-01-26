@@ -164,8 +164,27 @@ namespace WebPacketSimulator.Wpf
         /// This function presents a dialog which is used for saving current work
         /// </summary>
         /// <returns></returns>
-        public static MessageBoxResult SaveCurrentWorkQuery() =>
-            MessageBox.Show("Do you want to save the current work?", "Save current work", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+        public static MessageBoxResult SaveCurrentWorkQuery()
+        {
+            if (WpfRouter.Routers.Count == 0)
+            {
+                return MessageBoxResult.No;
+            }
+            if(MainWindow.CurrentFilePath != null)
+            {
+                var loadedResults = FileHandler.LoadFile(MainWindow.CurrentFilePath, false);
+                var routers1 = RouterInfo.WpfRoutersToRouterInfos(WpfRouter.Routers);
+                var routers2 = loadedResults.RouterInfos;
+                var connections1 = ConnectionInfo.ConnectionsToConnectionInfos(Connection.Connections);
+                var connections2 = loadedResults.ConnectionInfos;
+                if (RouterInfo.AreCollectionsSame(routers1, routers2) == true &&
+                    ConnectionInfo.AreCollectionsSame(connections1, connections2) == true)
+                {
+                    return MessageBoxResult.No;
+                }
+            }
+            return MessageBox.Show("Do you want to save the current work?", "Save current work", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+        }
 
         #region Highlight/unhighlight functions
         /// <summary>

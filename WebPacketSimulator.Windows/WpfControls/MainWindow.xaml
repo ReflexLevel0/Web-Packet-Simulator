@@ -47,6 +47,9 @@
                     Command="{x:Static local:SpeedUpAnimationCommand.Instance}"/>
         <KeyBinding Key="Esc"
                     Command="{x:Static local:UnhighlightCommand.Instance}"/>
+        <KeyBinding Key="N"
+                    Modifiers="Ctrl"
+                    Command="{x:Static local:NewFileCommand.Instance}"/>
     </Window.InputBindings>
 
     <Grid Margin="5">

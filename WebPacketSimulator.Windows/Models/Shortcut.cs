@@ -46,6 +46,11 @@ namespace WebPacketSimulator.Wpf
             {
                 ShortcutKeyCombination = "Del",
                 ShortcutDescription = "Delete all highlighted objects"
+            },
+            new Shortcut()
+            {
+                ShortcutKeyCombination = "Ctrl + N",
+                ShortcutDescription = "Create a new project"
             }
         }.OrderBy(s => s.ShortcutDescription).ToList();
     }

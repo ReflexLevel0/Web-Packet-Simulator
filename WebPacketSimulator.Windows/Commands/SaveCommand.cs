@@ -15,7 +15,7 @@ namespace WebPacketSimulator.Wpf
         public bool CanExecute(object parameter) => true;
         public void Execute(object parameter)
         {
-            if (MainWindow.CurrentFilePath == null)
+            if (MainWindow.CurrentFilePath == null && WpfRouter.Routers.Count != 0)
             {
                 SaveFileDialog dialog = new SaveFileDialog();
                 dialog.Filter = FileHandler.FileDialogFilter;

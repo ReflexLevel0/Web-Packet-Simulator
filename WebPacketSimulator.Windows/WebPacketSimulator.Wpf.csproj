@@ -56,7 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BoolEventArgs.cs" />
+    <Compile Include="ConnectionInfo.cs" />
+    <Compile Include="Models\BoolEventArgs.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\DeleteCommand.cs" />
     <Compile Include="Models\LineMarginToRouterConverterParameter.cs" />
@@ -66,6 +67,8 @@
     <Compile Include="Commands\SlowDownAnimationCommand.cs" />
     <Compile Include="Commands\SpeedUpAnimationCommand.cs" />
     <Compile Include="Commands\UnhighlightCommand.cs" />
+    <Compile Include="Commands\NewFileCommand.cs" />
+    <Compile Include="RouterInfo.cs" />
     <Compile Include="WpfControls\HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>
@@ -207,6 +210,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\Save.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Add.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

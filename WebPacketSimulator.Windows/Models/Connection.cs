@@ -43,5 +43,17 @@ namespace WebPacketSimulator.Wpf
             canvas.Children.Remove(BackupConnectionLine);
             Connections.Remove(this);
         }
+
+        /// <summary>
+        /// Deletes all connections in a list
+        /// </summary>
+        /// <param name="connections"> Connections to be deleted </param>
+        public static void DeleteAll(IEnumerable<Connection> connections)
+        {
+            while(connections.Count() > 0)
+            {
+                connections.First().Delete();
+            }
+        }
     }
 }

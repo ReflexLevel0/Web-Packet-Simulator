@@ -45,9 +45,17 @@ namespace WebPacketSimulator.Wpf
         /// This function loads the chosen file
         /// </summary>
         /// <param name="fileName"> Path to the file to be opened </param>
+        /// <param name="populateCanvas"> If true, canvas will be populated with loaded components </param>
         /// <returns></returns>
-        public static void LoadFile(string fileName)
+        public static (List<RouterInfo> RouterInfos, List<ConnectionInfo> ConnectionInfos) LoadFile(string fileName, bool populateCanvas)
         {
+            if (File.Exists(fileName) == false)
+            {
+                throw new Exception("Error in opening file!");
+            }
+
+            List<RouterInfo> routerInfos = new List<RouterInfo>();
+            List<ConnectionInfo> connectionInfos = new List<ConnectionInfo>();
             var text = File.ReadAllText(fileName).Replace("\r", "");
             var lines = text.Split('\n');
             bool firstPart = true;
@@ -61,15 +69,47 @@ namespace WebPacketSimulator.Wpf
                 var lineParts = line.Split(' ');
                 if (firstPart)
                 {
-                    var routerInfo = lineParts.ToRouterInfo();
-                    WpfRouter.CreateRouter(routerInfo.location, routerInfo.address, routerInfo.name);
+                    routerInfos.Add(lineParts.ToRouterInfo());
                 }
                 else
                 {
-                    var connectionInfo = lineParts.ToConnectionInfo();
-                    WpfRouter.ConnectRouters(WpfRouter.Routers[connectionInfo.sourceRouterIndex],
-                                             WpfRouter.Routers[connectionInfo.destinationRouterIndex]);
+                    connectionInfos.Add(lineParts.ToConnectionInfo(routerInfos));
                 }
+            }
+            if (populateCanvas)
+            {
+                PopulateCanvas(routerInfos, connectionInfos);
+                MainWindow.CurrentFilePath = fileName;
+            }
+            return (routerInfos, connectionInfos);
+        }
+
+        /// <summary>
+        /// This function populates a canvas with components
+        /// </summary>
+        /// <param name="routerInfos"> Info about routers which will be created </param>
+        /// <param name="connectionInfos"> Info about connection which will be created </param>
+        static void PopulateCanvas(List<RouterInfo> routerInfos, List<ConnectionInfo> connectionInfos)
+        {
+            //Deleting current data and loading data from the file
+            while (WpfRouter.Routers.Count > 0)
+            {
+                WpfRouter.Routers[0].Delete();
+            }
+            while (Connection.Connections.Count > 0)
+            {
+                Connection.Connections[0].Delete();
+            }
+
+            //Populating canvas with loaded data
+            foreach (var router in routerInfos)
+            {
+                WpfRouter.CreateRouter(router.Location, router.Address, router.Name);
+            }
+            foreach (var connection in connectionInfos)
+            {
+                WpfRouter.ConnectRouters(WpfRouter.Routers[routerInfos.IndexOf(connection.SourceRouterInfo)],
+                                         WpfRouter.Routers[routerInfos.IndexOf(connection.DestinationRouterInfo)]);
             }
         }
 
@@ -78,7 +118,7 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         /// <param name="lineParts"></param>
         /// <returns></returns>
-        private static (Point location, string address, string name) ToRouterInfo(this string[] lineParts)
+        private static RouterInfo ToRouterInfo(this string[] lineParts)
         {
             if (lineParts.Length < 2)
             {
@@ -113,23 +153,29 @@ namespace WebPacketSimulator.Wpf
                         }
                         break;
                     case 2:
-                        address = lineParts[2];
+                        address = string.IsNullOrEmpty(lineParts[2]) ? null : lineParts[2];
                         break;
                     case 3:
-                        name = lineParts[3];
+                        name = string.IsNullOrEmpty(lineParts[3]) ? null : lineParts[3];
                         break;
                 }
                 counter++;
             }
-            return (location, address, name);
+            return new RouterInfo() 
+            {
+                Location = location,
+                Address = address,
+                Name = name
+            };
         }
 
         /// <summary>
         /// Gets connection information from line parts
         /// </summary>
         /// <param name="lineParts"></param>
+        /// <param name="routerInfos"> Router information </param>
         /// <returns></returns>
-        private static (int sourceRouterIndex, int destinationRouterIndex) ToConnectionInfo(this string[] lineParts)
+        private static ConnectionInfo ToConnectionInfo(this string[] lineParts, List<RouterInfo> routerInfos)
         {
             if (lineParts.Length != 2)
             {
@@ -147,7 +193,11 @@ namespace WebPacketSimulator.Wpf
                 throw invalidFileException;
             }
 
-            return (source, destination);
+            return new ConnectionInfo() 
+            { 
+                SourceRouterInfo = routerInfos[source], 
+                DestinationRouterInfo = routerInfos[destination]
+            };
         }
     }
 }
