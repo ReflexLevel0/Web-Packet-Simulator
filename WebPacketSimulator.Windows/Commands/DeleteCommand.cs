@@ -23,9 +23,11 @@ namespace WebPacketSimulator.Wpf
                 CanExecuteChanged_Invoke();
             };
         }
-        public bool CanExecute(object parameter) => 
-            WpfRouter.HighlightedRouters.Count != 0 || Connection.HighlightedConnections.Count != 0;
-        void CanExecuteChanged_Invoke()
+        public bool CanExecute(object parameter) =>
+            MainCanvas.IsMessageAnimationRunning == false &&
+            (WpfRouter.HighlightedRouters.Count != 0 ||
+            Connection.HighlightedConnections.Count != 0);
+        public void CanExecuteChanged_Invoke()
         {
             CanExecuteChanged.Invoke(this, new BoolEventArgs(CanExecute(null)));
         }

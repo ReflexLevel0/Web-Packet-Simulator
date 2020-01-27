@@ -9,8 +9,8 @@
     <StackPanel>
         <ScrollViewer MaxHeight="100" x:Name="PacketConsoleScrollViewer">
             <TextBlock x:Name="PacketConsoleTextBlock" 
-                           ScrollViewer.CanContentScroll="True" 
-                           ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                       ScrollViewer.CanContentScroll="True" 
+                       ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </ScrollViewer>
     </StackPanel>
 </UserControl>

@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static WebPacketSimulator.Wpf.ComponentSelection;
 
 namespace WebPacketSimulator.Wpf
 {
@@ -84,7 +85,8 @@ namespace WebPacketSimulator.Wpf
         public async static Task SendPacket(WpfRouter source, WpfRouter destination)
         {
             //Getting path to destination and setting up message image
-            var path = source.Router.GetPathToRouter(WpfRouter.GetRouters().ToList(),
+            var routers = WpfRouter.GetRouters().ToList();
+            var path = source.Router.GetPathToRouter(routers,
                                                      destination.Router);
             path.RemoveAt(0);
             var messageImage = MainWindow.PacketImage;
@@ -246,6 +248,10 @@ namespace WebPacketSimulator.Wpf
         /// <param name="connectionLine"> Line to be highlighted </param>
         public static void HighlightLine(this Line connectionLine)
         {
+            if (SelectedComponent != Components.Line)
+            {
+                return;
+            }
             connectionLine.Opacity = Connection.HighlightedConnectionLineOpacity;
             Connection.HighlightedConnections.Add(connectionLine);
         }

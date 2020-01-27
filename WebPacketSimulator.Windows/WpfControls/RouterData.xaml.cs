@@ -82,8 +82,8 @@ namespace WebPacketSimulator.Wpf
         /// </summary>
         public void ShowRouterData()
         {
+            MainCanvas.HighlightedRouter = WpfRouter.HighlightedRouters[0].Router;
             AnimateRouterDataOpacity(true);
-            MainWindow.CurrentMainWindow.HighlightedRouter = WpfRouter.HighlightedRouters[0].Router;
         }
 
         /// <summary>
@@ -152,22 +152,25 @@ namespace WebPacketSimulator.Wpf
         {
             Instance.RouterName = routerName;
             Instance.RouterAddress = routerAddress;
+            Instance.RouterNameTextBox.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
+            Instance.RouterAddressTextBox.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
+            Instance.RouterNameTextBox.Focus();
         }
 
         private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var router = (from _router in WpfRouter.Routers
-                          where _router.Router == MainWindow.CurrentMainWindow.HighlightedRouter
+                          where _router.Router == MainCanvas.HighlightedRouter
                           select _router).First();
-            MainWindow.CurrentMainWindow.HighlightedRouter.Name = (sender as TextBox).Text;
+            MainCanvas.HighlightedRouter.Name = (sender as TextBox).Text;
         }
 
         private void AddressTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var router = (from _router in WpfRouter.Routers
-                          where _router.Router == MainWindow.CurrentMainWindow.HighlightedRouter
+                          where _router.Router == MainCanvas.HighlightedRouter
                           select _router).First();
-            MainWindow.CurrentMainWindow.HighlightedRouter.Address = (sender as TextBox).Text;
+            MainCanvas.HighlightedRouter.Address = (sender as TextBox).Text;
         }
     }
 }

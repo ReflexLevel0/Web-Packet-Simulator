@@ -21,6 +21,8 @@ namespace WebPacketSimulator.Wpf
     public partial class ComponentSelection : UserControl
     {
         public static ComponentSelection Instance;
+        public enum Components { Select, Router, Line, Packet }
+        public static Components SelectedComponent = Components.Select;
 
         public ComponentSelection()
         {
@@ -37,19 +39,19 @@ namespace WebPacketSimulator.Wpf
             var selectedValue = ((sender as ListView).SelectedValue as Component).Text.ToString();
             if (selectedValue.CompareTo(Component.RouterComponentText) == 0)
             {
-                MainWindow.SelectedComponent = MainWindow.Components.Router;
+                SelectedComponent = Components.Router;
             }
             else if (selectedValue.CompareTo(Component.LineComponentText) == 0)
             {
-                MainWindow.SelectedComponent = MainWindow.Components.Line;
+                SelectedComponent = Components.Line;
             }
             else if (selectedValue.CompareTo(Component.SelectComponentText) == 0)
             {
-                MainWindow.SelectedComponent = MainWindow.Components.Select;
+                SelectedComponent = Components.Select;
             }
             else
             {
-                MainWindow.SelectedComponent = MainWindow.Components.Packet;
+                SelectedComponent = Components.Packet;
             }
         }
     }

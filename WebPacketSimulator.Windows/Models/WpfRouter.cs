@@ -131,18 +131,7 @@ namespace WebPacketSimulator.Wpf
         /// <returns></returns>
         public static void DisconnectRouters(WpfRouter routerA, WpfRouter routerB)
         {
-            routerA.Router.LinkedRouters.Remove(routerB.Router);
-            routerB.Router.LinkedRouters.Remove(routerA.Router);
-            var connectionsToRemove = (from connection in Connections
-                                       where
-        (connection.SourceRouter == routerA && connection.DestinationRouter == routerB) ||
-        (connection.SourceRouter == routerB && connection.DestinationRouter == routerA)
-                                       select connection).ToList();
-            foreach (var _connection in connectionsToRemove)
-            {
-                MainCanvas.Instance.Canvas.Children.Remove(_connection.ConnectionLine);
-                Connections.Remove(_connection);
-            }
+            Connection.DeleteAll(GetConnections(routerA, routerB));
         }
 
         /// <summary>+
@@ -287,8 +276,6 @@ namespace WebPacketSimulator.Wpf
         /// <param name="e"></param>
         static void ConnectionLine_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("Y");
-
             var clickedLine = (sender as Line);
             var connection = (from _connection in Connections
                               where _connection.ConnectionLine == clickedLine || 
@@ -313,7 +300,6 @@ namespace WebPacketSimulator.Wpf
                 HighlightedConnections.UnhighlightAllLines();
                 connection.ConnectionLine.HighlightLine();
             }
-            e.Handled = true;
         }
 
         /// <summary>

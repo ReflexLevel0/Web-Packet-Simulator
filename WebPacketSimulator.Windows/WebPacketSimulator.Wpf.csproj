@@ -56,7 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConnectionInfo.cs" />
+    <Compile Include="Models\ConnectionInfo.cs" />
     <Compile Include="Models\BoolEventArgs.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\DeleteCommand.cs" />
@@ -68,7 +68,7 @@
     <Compile Include="Commands\SpeedUpAnimationCommand.cs" />
     <Compile Include="Commands\UnhighlightCommand.cs" />
     <Compile Include="Commands\NewFileCommand.cs" />
-    <Compile Include="RouterInfo.cs" />
+    <Compile Include="Models\RouterInfo.cs" />
     <Compile Include="WpfControls\HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>

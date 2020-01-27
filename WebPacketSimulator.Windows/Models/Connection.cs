@@ -33,15 +33,22 @@ namespace WebPacketSimulator.Wpf
         }
 
         /// <summary>
-        /// This function deletes this connection
+        /// This function is used to delete a connection
         /// </summary>
         public void Delete()
         {
-            Canvas canvas = MainCanvas.Instance.Canvas;
-            HighlightedConnections.Remove(ConnectionLine);
-            canvas.Children.Remove(ConnectionLine);
-            canvas.Children.Remove(BackupConnectionLine);
-            Connections.Remove(this);
+            SourceRouter.Router.LinkedRouters.Remove(DestinationRouter.Router);
+            DestinationRouter.Router.LinkedRouters.Remove(SourceRouter.Router);
+            var connectionsToRemove = GetConnections(SourceRouter, DestinationRouter).ToList();
+            while(connectionsToRemove.Count > 0)
+            {
+                var connection = connectionsToRemove[0];
+                HighlightedConnections.Remove(connection.ConnectionLine);
+                MainCanvas.Instance.Canvas.Children.Remove(connection.ConnectionLine);
+                MainCanvas.Instance.Canvas.Children.Remove(connection.BackupConnectionLine);
+                Connections.Remove(connection);
+                connectionsToRemove.RemoveAt(0);
+            }
         }
 
         /// <summary>
@@ -55,5 +62,19 @@ namespace WebPacketSimulator.Wpf
                 connections.First().Delete();
             }
         }
+
+        /// <summary>
+        /// This function gets all connections between two routers
+        /// </summary>
+        /// <param name="routerA"></param>
+        /// <param name="routerB"></param>
+        /// <returns></returns>
+        public static IEnumerable<Connection> GetConnections(WpfRouter routerA, WpfRouter routerB) =>
+            from connection in Connections
+            where (connection.SourceRouter == routerA &&
+            connection.DestinationRouter == routerB) ||
+            (connection.SourceRouter == routerB &&
+            connection.DestinationRouter == routerA)
+            select connection;
     }
 }

@@ -27,32 +27,18 @@ namespace WebPacketSimulator.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Variables
-        public enum Components { Select, Router, Line, Packet }
-        public static Components SelectedComponent = Components.Select;
         public static Image PacketImage = new Image()
         {
             Source = new BitmapImage(new Uri("/Images/Packet.png", UriKind.Relative)),
             Width = 24,
             Height = 24
         };
-        public static MainWindow CurrentMainWindow;
-        Router highlightedRouter;
-        public Router HighlightedRouter 
-        { 
-            get => highlightedRouter; 
-            set 
-            { 
-                highlightedRouter = value; 
-                RouterData.UpdateRouterData(HighlightedRouter.Name, HighlightedRouter.Address); 
-            } 
-        }
+        public static MainWindow Instance;
         public static string CurrentFilePath;
-        #endregion
 
         public MainWindow()
         {
-            CurrentMainWindow = this;
+            Instance = this;
             InitializeComponent();
             DataContext = this;
         }

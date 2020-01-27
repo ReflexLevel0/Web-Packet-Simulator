@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WebPacketSimulator.Common;
+using static WebPacketSimulator.Wpf.ComponentSelection;
 
 namespace WebPacketSimulator.Wpf
 {
@@ -22,11 +24,29 @@ namespace WebPacketSimulator.Wpf
     public partial class MainCanvas : UserControl
     {
         public static MainCanvas Instance { get; set; }
-
         Point previousMousePosition = new Point();
-        public static bool IsMessageAnimationRunning;
+        static bool isMessageAnimationRunning;
+        public static bool IsMessageAnimationRunning 
+        {
+            get => isMessageAnimationRunning;
+            set
+            {
+                isMessageAnimationRunning = value;
+                DeleteCommand.Instance.CanExecuteChanged_Invoke();
+            }
+        }
         public static Line CurrentLine = null;
         private Point lastMouseDownLocation;
+        static Router highlightedRouter;
+        public static Router HighlightedRouter
+        {
+            get => highlightedRouter;
+            set
+            {
+                highlightedRouter = value;
+                RouterData.UpdateRouterData(HighlightedRouter.Name, HighlightedRouter.Address);
+            }
+        }
 
         public MainCanvas()
         {
@@ -41,7 +61,7 @@ namespace WebPacketSimulator.Wpf
             bool isCtrlPressed = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 
             #region Line
-            if (MainWindow.SelectedComponent == MainWindow.Components.Line && IsMessageAnimationRunning == false && clickedRouter != null)
+            if (SelectedComponent == Components.Line && IsMessageAnimationRunning == false && clickedRouter != null)
             {
                 //If this is the first part of the connection
                 if (WpfRouter.LastClickedRouter == null)
@@ -59,7 +79,7 @@ namespace WebPacketSimulator.Wpf
             #endregion
 
             #region Packet
-            else if (MainWindow.SelectedComponent == MainWindow.Components.Packet && clickedRouter != null)
+            else if (SelectedComponent == Components.Packet && clickedRouter != null)
             {
                 if (WpfRouter.LastClickedRouter == null)
                 {
@@ -75,7 +95,7 @@ namespace WebPacketSimulator.Wpf
 
             #region Router
             //Unhighlighting all routers except the clicked one (if routers weren't moved)
-            else if (MainWindow.SelectedComponent == MainWindow.Components.Router && clickedRouter != null)
+            else if (SelectedComponent == Components.Router && clickedRouter != null)
             {
                 if (Math.Abs(location.X - lastMouseDownLocation.X) < 1 &&
                     Math.Abs(location.Y - lastMouseDownLocation.Y) < 1 &&
@@ -86,7 +106,7 @@ namespace WebPacketSimulator.Wpf
                 }
             }
             //Unhighlighting other routers and higlighting the new router
-            else if (MainWindow.SelectedComponent == MainWindow.Components.Router && clickedRouter == null)
+            else if (SelectedComponent == Components.Router && clickedRouter == null)
             {
                 WpfRouter.HighlightedRouters.UnhighlightAllRouters(false);
                 WpfRouter.CreateRouter(new Point(location.X - WpfRouter.RouterImageWidth / 2, 
@@ -99,7 +119,7 @@ namespace WebPacketSimulator.Wpf
         {
             var clickPosition = e.GetPosition(Canvas);
             var clickedRouter = clickPosition.GetRouterOnLocation();
-            if (clickedRouter != null && MainWindow.SelectedComponent == MainWindow.Components.Router)
+            if (clickedRouter != null && SelectedComponent == Components.Router)
             {
                 bool isCtrlPressed =
                     Keyboard.IsKeyDown(Key.LeftCtrl) == true ||
@@ -151,7 +171,7 @@ namespace WebPacketSimulator.Wpf
                     WpfRouter.MoveRouters(WpfRouter.HighlightedRouters, offsetAmmount);
                 }
             }
-            else if (MainWindow.SelectedComponent == MainWindow.Components.Line && WpfRouter.LastClickedRouter != null)
+            else if (SelectedComponent == Components.Line && WpfRouter.LastClickedRouter != null)
             {
                 if (CurrentLine == null)
                 {
