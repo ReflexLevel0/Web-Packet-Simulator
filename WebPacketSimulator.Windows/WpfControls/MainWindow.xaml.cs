@@ -53,7 +53,7 @@ namespace WebPacketSimulator.Wpf
                         e.Cancel = true;
                         return;
                     case MessageBoxResult.Yes:
-                        SaveCommand.Instance.Equals(null);
+                        SaveCommand.Instance.Execute(null);
                         break;
                 }
             }

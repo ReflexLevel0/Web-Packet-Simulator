@@ -5,3 +5,5 @@ C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\Common\ob
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\Common\obj\Debug\netstandard2.0\Common.AssemblyInfo.cs
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\Common\obj\Debug\netstandard2.0\Common.dll
 C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\Common\obj\Debug\netstandard2.0\Common.pdb
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\Common\obj\Debug\netstandard2.0\Common.csprojAssemblyReference.cache
+C:\Users\Korisnik\Dropbox\Programiranje\C#\Projects\WebPacketSimulator\Common\obj\Debug\netstandard2.0\Common.csproj.CoreCompileInputs.cache
